@@ -2,6 +2,9 @@
 Example usage of the quantum simulation
 including qubit initialization, quantum complete set gate application, and measurement.
 
+Example run:
+cargo run --bin main
+
 Copyright © 2024 AlgoHertz. All rights reserved.
 */
 
