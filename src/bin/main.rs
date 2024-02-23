@@ -8,9 +8,11 @@ cargo run --bin main
 Copyright © 2024 AlgoHertz. All rights reserved.
 */
 
+use quantum_simulation::simulation::QuantumSimulation;
+
 fn main() {
     let qubit_count: usize = 3; // the number of qubits
-    let mut simulation = quantum_simulation::QuantumSimulation::new(qubit_count, 0u64);
+    let mut simulation = QuantumSimulation::new(qubit_count, 0u64);
     simulation.init_rnd_state();
     dbg!(&simulation);
     simulation.pauli_x(0);
