@@ -8,7 +8,7 @@ Copyright © 2024 AlgoHertz. All rights reserved.
 */
 
 use num_complex::Complex;
-use rand::Rng;
+use rand::{Rng, SeedableRng};
 use rand::rngs::StdRng;
 use std::f64::consts::PI;
 
@@ -109,15 +109,18 @@ fn cnot_gate(amplitude00: Complex<f64>, amplitude01: Complex<f64>, amplitude10: 
 pub struct QuantumSimulation {
     qubit_count: usize,
     amplitudes: Vec<Complex<f64>>,
+    rng: StdRng,
 }
 
 impl QuantumSimulation {
 
-    pub fn new(qubit_count: usize) -> QuantumSimulation {
+    pub fn new(qubit_count: usize, rnd_seed: u64) -> QuantumSimulation {
         assert!(qubit_count <= MAX_QUBIT_COUNT, "The number of qubits in the simulation cannot exceed {}.", MAX_QUBIT_COUNT);
+
         let mut simulation = QuantumSimulation {
             qubit_count,
             amplitudes: Vec::new(),
+            rng: StdRng::seed_from_u64(rnd_seed),
         };
         simulation.init_ground_state();
 
@@ -134,16 +137,16 @@ impl QuantumSimulation {
         self.amplitudes = get_amplitudes(qubits);
     }
 
-    pub fn init_rnd_state(&mut self, rng: &mut StdRng) {
-        let qubits = random_qubits(rng, self.qubit_count);
+    pub fn init_rnd_state(&mut self) {
+        let qubits = random_qubits(&mut self.rng, self.qubit_count);
         self.amplitudes = get_amplitudes(qubits)
     }
 
-    fn _measure(&self, rng: &mut StdRng) -> usize {
+    fn _measure(&mut self) -> usize {
         let probabilities: Vec<f64> = self.amplitudes.iter()
             .map(|amplitude| amplitude.norm_sqr())
             .collect();
-        let random_number = rng.gen::<f64>();
+        let random_number = self.rng.gen::<f64>();
         let mut accumulated_probability = 0.0;
         let mut measured_state_index = 0;
 
@@ -158,8 +161,8 @@ impl QuantumSimulation {
         measured_state_index
     }
 
-    pub fn measure(&mut self, rng: &mut StdRng) -> Vec<bool> {
-        let measured_state_index = self._measure(rng);
+    pub fn measure(&mut self) -> Vec<bool> {
+        let measured_state_index = self._measure();
         let mut measured_states: Vec<bool> = Vec::with_capacity(self.qubit_count);
         let mut qubits: Vec<Qubit<f64>> = Vec::with_capacity(self.qubit_count);
         for i in 0..self.qubit_count {
