@@ -35,7 +35,10 @@ pub fn evaluate(measurements: Vec<Vec<bool>>) {
         }
     }
 
-    for (measurement, count) in measurement_count {
+    let mut measurement_count_pairs: Vec<_> = measurement_count.into_iter().collect();
+    measurement_count_pairs.sort_by(|a, b| b.1.cmp(&a.1));
+
+    for (measurement, count) in measurement_count_pairs {
         println!("{}: {:?}", measurement_string(measurement), count);
     }
 
