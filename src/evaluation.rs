@@ -20,26 +20,28 @@ fn measurement_string(measurement: Vec<bool>) -> String {
 }
 
 pub fn evaluate(measurements: Vec<Vec<bool>>) {
+    println!("Quantum simulation results");
+    let qubit_count = measurements[0].len();
+    println!("Qubit count: {:?}", qubit_count);
     let measurement_count = measurements.len();
     println!("Measurement count: {:?}", measurement_count);
-    let qubit_count = measurements[0].len();
-    dbg!(qubit_count);
 
-    let mut measurement_count: HashMap<Vec<bool>, usize> = HashMap::new();
+    let mut measurement_count_map: HashMap<Vec<bool>, usize> = HashMap::new();
 
     for measurement in measurements {
-        if let Some(count) = measurement_count.get(&measurement) {
-            measurement_count.insert(measurement, count + 1);
+        if let Some(count) = measurement_count_map.get(&measurement) {
+            measurement_count_map.insert(measurement, count + 1);
         } else {
-            measurement_count.insert(measurement, 1);
+            measurement_count_map.insert(measurement, 1);
         }
     }
 
-    let mut measurement_count_pairs: Vec<_> = measurement_count.into_iter().collect();
+    let mut measurement_count_pairs: Vec<_> = measurement_count_map.into_iter().collect();
     measurement_count_pairs.sort_by(|a, b| b.1.cmp(&a.1));
 
     for (measurement, count) in measurement_count_pairs {
-        println!("{}: {:?}", measurement_string(measurement), count);
+        let probability_pct: f64 = 100.0 * count as f64 / measurement_count as f64;
+        println!("{}: {:?}%", measurement_string(measurement), probability_pct);
     }
 
 }

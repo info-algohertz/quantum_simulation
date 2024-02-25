@@ -14,7 +14,6 @@ use quantum_simulation::evaluation::evaluate;
 const RUN_COUNT: usize = 10;
 
 fn main() {
-    println!("Quantum simulation!");
     let qubit_count: usize = 3; // the number of qubits
     let mut simulation = QuantumSimulation::new(qubit_count, 0u64);
     let mut measurements = Vec::with_capacity(RUN_COUNT);
