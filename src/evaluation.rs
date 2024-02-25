@@ -1,4 +1,23 @@
+/*
+Module to evaluate and display the results of the quantum measurements.
+
+Copyright © 2024 AlgoHertz. All rights reserved.
+*/
+
 use std::collections::HashMap;
+
+fn measurement_string(measurement: Vec<bool>) -> String {
+    let mut result = String::from("|");
+    for value in measurement.into_iter().rev() {
+        if value {
+            result.push('1');
+        } else {
+            result.push('0');
+        }
+    }
+    result.push('>');
+    result
+}
 
 pub fn evaluate(measurements: Vec<Vec<bool>>) {
     let measurement_count = measurements.len();
@@ -17,7 +36,7 @@ pub fn evaluate(measurements: Vec<Vec<bool>>) {
     }
 
     for (measurement, count) in measurement_count {
-        println!("{:?}: {:?}", measurement, count);
+        println!("{}: {:?}", measurement_string(measurement), count);
     }
 
 }
