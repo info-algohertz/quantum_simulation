@@ -11,7 +11,7 @@ Copyright © 2024 AlgoHertz. All rights reserved.
 use quantum_simulation::simulation::QuantumSimulation;
 use quantum_simulation::evaluation::evaluate;
 
-const RUN_COUNT: usize = 10;
+const RUN_COUNT: usize = 100;
 
 fn main() {
     let qubit_count: usize = 3; // the number of qubits

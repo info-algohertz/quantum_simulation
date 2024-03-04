@@ -21,7 +21,7 @@ fn measurement_string(measurement: Vec<bool>) -> String {
 
 fn measurement_wildcard(qubit_count: usize, qubit_number: usize) -> String {
     let mut result = String::from("|");
-    for i in 0..qubit_count {
+    for i in (0..qubit_count).rev() {
         if qubit_number == i {
             result.push('1');
         } else {
@@ -65,7 +65,7 @@ pub fn evaluate(measurements: Vec<Vec<bool>>) {
     }
 
     for qubit_number in 0..qubit_count {
-        let probability_pct: f64 = 100.0 * qubit_count as f64 / one_counts[qubit_number] as f64;
+        let probability_pct: f64 = 100.0 * one_counts[qubit_number] as f64 / measurement_count as f64;
         println!("{:?}. {}: {:?}%", qubit_number, measurement_wildcard(qubit_count, qubit_number), probability_pct);
     }
 }
