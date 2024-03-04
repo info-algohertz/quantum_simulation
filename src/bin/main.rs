@@ -23,6 +23,7 @@ fn main() {
         simulation.pauli_x(0);
         simulation.pauli_y(1);
         simulation.pauli_z(2);
+        simulation.toffoli(0, 1, 2);
         simulation.cnot(0, 1);
         let measured_states = simulation.measure();
         measurements.push(measured_states);
