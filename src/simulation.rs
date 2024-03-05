@@ -13,6 +13,7 @@ use rand::rngs::StdRng;
 use std::f64::consts::PI;
 
 const MAX_QUBIT_COUNT: usize = 32;
+const SQRT_2: f64 = 1.4142135623730951;
 
 pub type Qubit<T> = (Complex<T>, Complex<T>);
 
@@ -101,6 +102,12 @@ fn pauli_z_gate(amplitude0: Complex<f64>, amplitude1: Complex<f64>) -> (Complex<
     (amplitude0, -amplitude1)
 }
 
+fn hadamard_gate(amplitude0: Complex<f64>, amplitude1: Complex<f64>) -> (Complex<f64>, Complex<f64>) {
+    let factor = 1.0/SQRT_2;
+    (factor*(amplitude0 + amplitude1), factor*(amplitude0 - amplitude1))
+}
+
+//CX gate
 fn cnot_gate(amplitude00: Complex<f64>, amplitude01: Complex<f64>, amplitude10: Complex<f64>, amplitude11: Complex<f64>) -> (Complex<f64>, Complex<f64>, Complex<f64>, Complex<f64>) {
     (amplitude00, amplitude01, amplitude11, amplitude10)
 }
@@ -210,6 +217,10 @@ impl QuantumSimulation {
 
     pub fn pauli_z(&mut self, qubit_number: usize) {
         self.apply_one_qubit_gate(pauli_z_gate, qubit_number);
+    }
+
+    pub fn hadamard(&mut self, qubit_number: usize) {
+        self.apply_one_qubit_gate(hadamard_gate, qubit_number);
     }
 
     fn apply_two_qubit_gate<F>(&mut self, two_qubit_gate: F, qubit_number0: usize,  qubit_number1: usize)

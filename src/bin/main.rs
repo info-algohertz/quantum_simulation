@@ -24,6 +24,7 @@ fn main() {
         simulation.pauli_y(1);
         simulation.pauli_z(2);
         simulation.toffoli(0, 1, 2);
+        simulation.hadamard(1);
         simulation.cnot(0, 1);
         let measured_states = simulation.measure();
         measurements.push(measured_states);
