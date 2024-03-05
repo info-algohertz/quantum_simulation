@@ -23,8 +23,10 @@ fn main() {
         simulation.pauli_x(0);
         simulation.pauli_y(1);
         simulation.pauli_z(2);
+        simulation.cz(0, 1);
         simulation.toffoli(0, 1, 2);
         simulation.s(0);
+        simulation.swap(1, 2);
         simulation.t(1);
         simulation.cnot(0, 1);
         simulation.hadamard(1);

@@ -119,6 +119,14 @@ fn cnot_gate(amplitude00: Complex<f64>, amplitude01: Complex<f64>, amplitude10: 
     (amplitude00, amplitude01, amplitude11, amplitude10)
 }
 
+fn cz_gate(amplitude00: Complex<f64>, amplitude01: Complex<f64>, amplitude10: Complex<f64>, amplitude11: Complex<f64>) -> (Complex<f64>, Complex<f64>, Complex<f64>, Complex<f64>) {
+    (amplitude00, amplitude01, amplitude10, -amplitude11)
+}
+
+fn swap_gate(amplitude00: Complex<f64>, amplitude01: Complex<f64>, amplitude10: Complex<f64>, amplitude11: Complex<f64>) -> (Complex<f64>, Complex<f64>, Complex<f64>, Complex<f64>) {
+    (amplitude00, amplitude10, amplitude01, amplitude11)
+}
+
 fn toffoli_gate(amplitude000: Complex<f64>, amplitude001: Complex<f64>, amplitude010: Complex<f64>, amplitude011: Complex<f64>, amplitude100: Complex<f64>, amplitude101: Complex<f64>, amplitude110: Complex<f64>, amplitude111: Complex<f64>) -> (Complex<f64>, Complex<f64>, Complex<f64>, Complex<f64>, Complex<f64>, Complex<f64>, Complex<f64>, Complex<f64>) {
     (amplitude000, amplitude001, amplitude010, amplitude011, amplitude100, amplitude101, amplitude111, amplitude110)
 }
@@ -299,6 +307,14 @@ impl QuantumSimulation {
 
     pub fn cnot(&mut self, control_qubit_number: usize, target_qubit_number: usize) {
         self.apply_two_qubit_gate(cnot_gate, control_qubit_number, target_qubit_number);
+    }
+
+    pub fn cz(&mut self, control_qubit_number: usize, target_qubit_number: usize) {
+        self.apply_two_qubit_gate(cz_gate, control_qubit_number, target_qubit_number);
+    }
+
+    pub fn swap(&mut self, qubit_number0: usize, qubit_number1: usize) {
+        self.apply_two_qubit_gate(swap_gate, qubit_number0, qubit_number1);
     }
 
     pub fn toffoli(&mut self, control_qubit_number0: usize, control_qubit_number1: usize, target_qubit_number: usize) {
