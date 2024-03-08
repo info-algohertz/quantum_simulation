@@ -19,7 +19,6 @@ fn main() {
     let mut measurements = Vec::with_capacity(RUN_COUNT);
     for _ in 0..RUN_COUNT {
         simulation.init_rnd_state();
-        //dbg!(&simulation);
         simulation.pauli_x(0);
         simulation.pauli_y(1);
         simulation.pauli_z(2);
@@ -32,8 +31,6 @@ fn main() {
         simulation.hadamard(1);
         let measured_states = simulation.measure_all();
         measurements.push(measured_states);
-        //dbg!(&simulation);
-        //dbg!(measured_states);
     }
     evaluate(measurements);
 }
