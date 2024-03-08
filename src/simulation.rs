@@ -219,6 +219,26 @@ impl QuantumSimulation {
             measured_states.push(measured_state);
         }
 
+        let mut accumulated_probability = 0.0;
+        let mut possible_amplitude_indices: Vec<usize> = Vec::with_capacity(self.amplitudes.len());
+        'state_iteration: for i in 0..self.amplitudes.len() {
+            for (j, &qubit_number) in qubit_numbers.iter().enumerate() {
+                let qubit_state = i & (1 << qubit_number) > 0;
+                if measured_states[j] != qubit_state {
+                    self.amplitudes[i] = Complex::new(0.0, 0.0);
+                    continue 'state_iteration;
+                }
+            }
+            let probability = self.amplitudes[i].norm_sqr();
+            accumulated_probability += probability;
+            possible_amplitude_indices.push(i);
+        }
+
+        let bump_prob_factor = 1.0 / accumulated_probability;
+        for i in possible_amplitude_indices.into_iter() {
+            self.amplitudes[i] = bump_prob_factor*self.amplitudes[i];
+        }
+
         measured_states
     }
 
