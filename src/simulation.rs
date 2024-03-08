@@ -206,6 +206,16 @@ impl QuantumSimulation {
         measured_states
     }
 
+    fn measure(&mut self, qubit_numbers: Vec<usize>) -> Vec<bool> {
+        for qubit_number in qubit_numbers.iter() {
+            assert!(qubit_number < &self.qubit_count, "The qubit number has to be less than the number of qubits {}.", self.qubit_count);
+        }
+
+        let mut measured_states: Vec<bool> = Vec::with_capacity(self.qubit_count);
+
+        measured_states
+    }
+
     fn apply_one_qubit_gate<F>(&mut self, one_qubit_gate: F, qubit_number: usize)
     where F: Fn(Complex<f64>, Complex<f64>) -> (Complex<f64>, Complex<f64>) {
         assert!(qubit_number < self.qubit_count, "The qubit number has to be less than the number of qubits {}.", self.qubit_count);
