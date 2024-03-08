@@ -191,8 +191,8 @@ impl QuantumSimulation {
         let measured_state_index = self._choose_state();
         let mut measured_states: Vec<bool> = Vec::with_capacity(self.qubit_count);
         let mut qubits: Vec<Qubit<f64>> = Vec::with_capacity(self.qubit_count);
-        for i in 0..self.qubit_count {
-            let measured_state = measured_state_index & (1 << i) > 0;
+        for qubit_number in 0..self.qubit_count {
+            let measured_state = measured_state_index & (1 << qubit_number) > 0;
             measured_states.push(measured_state);
             if measured_state {
                 qubits.push(excited_state_qubit());
@@ -211,7 +211,13 @@ impl QuantumSimulation {
             assert!(qubit_number < &self.qubit_count, "The qubit number has to be less than the number of qubits {}.", self.qubit_count);
         }
 
+        let measured_state_index = self._choose_state();
         let mut measured_states: Vec<bool> = Vec::with_capacity(self.qubit_count);
+
+        for qubit_number in qubit_numbers.iter() {
+            let measured_state = measured_state_index & (1 << qubit_number) > 0;
+            measured_states.push(measured_state);
+        }
 
         measured_states
     }
