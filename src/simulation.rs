@@ -168,7 +168,7 @@ impl QuantumSimulation {
         self.amplitudes = get_amplitudes(qubits)
     }
 
-    fn _measure(&mut self) -> usize {
+    fn _measure_all(&mut self) -> usize {
         let probabilities: Vec<f64> = self.amplitudes.iter()
             .map(|amplitude| amplitude.norm_sqr())
             .collect();
@@ -187,8 +187,8 @@ impl QuantumSimulation {
         measured_state_index
     }
 
-    pub fn measure(&mut self) -> Vec<bool> {
-        let measured_state_index = self._measure();
+    pub fn measure_all(&mut self) -> Vec<bool> {
+        let measured_state_index = self._measure_all();
         let mut measured_states: Vec<bool> = Vec::with_capacity(self.qubit_count);
         let mut qubits: Vec<Qubit<f64>> = Vec::with_capacity(self.qubit_count);
         for i in 0..self.qubit_count {

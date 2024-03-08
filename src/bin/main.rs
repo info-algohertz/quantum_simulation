@@ -30,7 +30,7 @@ fn main() {
         simulation.t(1);
         simulation.cnot(0, 1);
         simulation.hadamard(1);
-        let measured_states = simulation.measure();
+        let measured_states = simulation.measure_all();
         measurements.push(measured_states);
         //dbg!(&simulation);
         //dbg!(measured_states);
