@@ -168,27 +168,27 @@ impl QuantumSimulation {
         self.amplitudes = get_amplitudes(qubits)
     }
 
-    fn _measure_all(&mut self) -> usize {
+    fn _choose_state(&mut self) -> usize {
         let probabilities: Vec<f64> = self.amplitudes.iter()
             .map(|amplitude| amplitude.norm_sqr())
             .collect();
         let random_number = self.rng.gen::<f64>();
         let mut accumulated_probability = 0.0;
-        let mut measured_state_index = 0;
+        let mut state_index = 0;
 
         for (i, &probability) in probabilities.iter().enumerate() {
             accumulated_probability += probability;
             if random_number <= accumulated_probability {
-                measured_state_index = i;
+                state_index = i;
                 break;
             }
         }
 
-        measured_state_index
+        state_index
     }
 
     pub fn measure_all(&mut self) -> Vec<bool> {
-        let measured_state_index = self._measure_all();
+        let measured_state_index = self._choose_state();
         let mut measured_states: Vec<bool> = Vec::with_capacity(self.qubit_count);
         let mut qubits: Vec<Qubit<f64>> = Vec::with_capacity(self.qubit_count);
         for i in 0..self.qubit_count {
@@ -206,7 +206,7 @@ impl QuantumSimulation {
         measured_states
     }
 
-    fn measure(&mut self, qubit_numbers: Vec<usize>) -> Vec<bool> {
+    pub fn measure(&mut self, qubit_numbers: Vec<usize>) -> Vec<bool> {
         for qubit_number in qubit_numbers.iter() {
             assert!(qubit_number < &self.qubit_count, "The qubit number has to be less than the number of qubits {}.", self.qubit_count);
         }
