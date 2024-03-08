@@ -357,3 +357,43 @@ impl QuantumSimulation {
         self.apply_three_qubit_gate(toffoli_gate, control_qubit_number0, control_qubit_number1, target_qubit_number);
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn _run_program1(simulation: &mut QuantumSimulation) {
+        simulation.init_rnd_state();
+        simulation.pauli_x(0);
+        simulation.pauli_y(1);
+        simulation.pauli_z(2);
+        simulation.cz(0, 1);
+        simulation.toffoli(0, 1, 2);
+        simulation.s(0);
+        simulation.swap(1, 2);
+        simulation.t(1);
+        simulation.cnot(0, 1);
+        simulation.hadamard(1);
+    }
+
+    #[test]
+    fn measurements_are_consistent() {
+        let qubit_count: usize = 3;
+        let run_count: usize = 100;
+
+        let mut simulation012 = QuantumSimulation::new(qubit_count, 0u64);
+        let mut simulation1 = QuantumSimulation::new(qubit_count, 0u64);
+        let mut simulation02 = QuantumSimulation::new(qubit_count, 0u64);
+        for _ in 0..run_count {
+            _run_program1(&mut simulation012);
+            _run_program1(&mut simulation1);
+            _run_program1(&mut simulation02);
+            let measurements012 = simulation012.measure_all();
+            let measurements1 = simulation1.measure(vec![1]);
+            let measurements02 = simulation02.measure(vec![0, 2]);
+            assert_eq!(measurements012[1], measurements1[0]);
+            assert_eq!(measurements012[0], measurements02[0]);
+            assert_eq!(measurements012[2], measurements02[1]);
+        }
+    }
+}
