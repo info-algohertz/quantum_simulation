@@ -127,6 +127,25 @@ fn swap_gate(amplitude00: Complex<f64>, amplitude01: Complex<f64>, amplitude10: 
     (amplitude00, amplitude10, amplitude01, amplitude11)
 }
 
+fn create_u_f(f: fn(bool) -> bool) -> impl Fn(Complex<f64>, Complex<f64>, Complex<f64>, Complex<f64>) -> (Complex<f64>, Complex<f64>, Complex<f64>, Complex<f64>) {
+    move |amplitude00, amplitude01, amplitude10, amplitude11| {
+        // Applying the function f to determine the behavior of U_f
+        let (new_amplitude10, new_amplitude11) = if f(false) {
+            (amplitude10, amplitude11) // No change for f(false) = false
+        } else {
+            (amplitude11, amplitude10) // Swap for f(false) = true
+        };
+
+        let (new_amplitude00, new_amplitude01) = if f(true) {
+            (amplitude01, amplitude00) // Swap for f(true) = true
+        } else {
+            (amplitude00, amplitude01) // No change for f(true) = false
+        };
+
+        (new_amplitude00, new_amplitude01, new_amplitude10, new_amplitude11)
+    }
+}
+
 fn toffoli_gate(amplitude000: Complex<f64>, amplitude001: Complex<f64>, amplitude010: Complex<f64>, amplitude011: Complex<f64>, amplitude100: Complex<f64>, amplitude101: Complex<f64>, amplitude110: Complex<f64>, amplitude111: Complex<f64>) -> (Complex<f64>, Complex<f64>, Complex<f64>, Complex<f64>, Complex<f64>, Complex<f64>, Complex<f64>, Complex<f64>) {
     (amplitude000, amplitude001, amplitude010, amplitude011, amplitude100, amplitude101, amplitude111, amplitude110)
 }
@@ -351,6 +370,11 @@ impl QuantumSimulation {
 
     pub fn swap(&mut self, qubit_number0: usize, qubit_number1: usize) {
         self.apply_two_qubit_gate(swap_gate, qubit_number0, qubit_number1);
+    }
+
+    pub fn apply_u_f(&mut self, f: fn(bool) -> bool, qubit_number0: usize, qubit_number1: usize) {
+        let u_f = create_u_f(f);
+        self.apply_two_qubit_gate(u_f, qubit_number0, qubit_number1);
     }
 
     pub fn toffoli(&mut self, control_qubit_number0: usize, control_qubit_number1: usize, target_qubit_number: usize) {
