@@ -61,11 +61,21 @@ pub fn evaluate(measurements: Vec<Vec<bool>>) {
 
     for (measurement, count) in measurement_count_pairs {
         let probability_pct: f64 = 100.0 * count as f64 / measurement_count as f64;
-        println!("{}: {:?}%", measurement_string(measurement), probability_pct);
+        println!(
+            "{}: {:?}%",
+            measurement_string(measurement),
+            probability_pct
+        );
     }
 
     for qubit_number in 0..qubit_count {
-        let probability_pct: f64 = 100.0 * one_counts[qubit_number] as f64 / measurement_count as f64;
-        println!("{:?}. {}: {:?}%", qubit_number, measurement_wildcard(qubit_count, qubit_number), probability_pct);
+        let probability_pct: f64 =
+            100.0 * one_counts[qubit_number] as f64 / measurement_count as f64;
+        println!(
+            "{:?}. {}: {:?}%",
+            qubit_number,
+            measurement_wildcard(qubit_count, qubit_number),
+            probability_pct
+        );
     }
 }

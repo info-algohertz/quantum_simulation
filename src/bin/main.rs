@@ -8,8 +8,8 @@ cargo run --bin main
 Copyright © 2024 AlgoHertz. All rights reserved.
 */
 
-use quantum_simulation::simulation::QuantumSimulation;
 use quantum_simulation::evaluation::evaluate;
+use quantum_simulation::simulation::QuantumSimulation;
 
 const RUN_COUNT: usize = 100;
 
@@ -34,4 +34,3 @@ fn main() {
     }
     evaluate(measurements);
 }
-
