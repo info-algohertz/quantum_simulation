@@ -1,6 +1,10 @@
 /*
 Deutsch's Algorithm to solve the parity problem.
 
+For a boolean function f:
+- return 1 if and only if the number of the outputs of f that return true is even,
+- return 0 otherwise.
+
 Example run:
 cargo run --bin deutsch_parity
 
