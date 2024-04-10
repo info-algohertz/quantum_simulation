@@ -21,6 +21,9 @@ fn run_deutsch_algo(f: fn(bool) -> bool, run_count: usize) {
     let mut simulation = QuantumSimulation::new(QUBIT_COUNT, 0u64);
     let mut measurements = Vec::with_capacity(RUN_COUNT);
     for _ in 0..run_count {
+        // Q0: ∣0⟩ -- |PX| -- |H| -- ∣-⟩ --|     | ----------- ∣-⟩
+        //                                 | U_f |
+        // Q1: ∣0⟩ ---------- |H| -------- |     | -- |H| -- = parity
         simulation.init_ground_state();
         simulation.pauli_x(0);
         simulation.hadamard(0);

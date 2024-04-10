@@ -6,6 +6,16 @@ Copyright © 2024 AlgoHertz. All rights reserved.
 
 use num_complex::Complex;
 
+// For a boolean function f creates a quantum gate U_f.
+// To make the U_f unitary, we let it represent a function
+// that takes as arguments (x, y) and returns (x, f(x) XOR y).
+// U_f does not act on two separate qubits, but on a 2-qubit system.
+// Hence each amplitude represents a probability of an outcome of 2 qubits.
+// The basis states with their vector representation are the following:
+// ∣00⟩ = (1,0,0,0)
+// ∣01⟩ = (0,1,0,0)
+// ∣10⟩ = (0,0,1,0)
+// ∣11⟩ = (0,0,0,1)
 pub(crate) fn create_u_f(
     f: fn(bool) -> bool,
 ) -> impl Fn(
