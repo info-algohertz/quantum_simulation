@@ -21,16 +21,11 @@ fn produce_ghz_state(run_count: usize) {
     let mut measurements = Vec::with_capacity(RUN_COUNT);
     for _ in 0..run_count {
         simulation.init_ground_state();
-        dbg!(&simulation);
         simulation.hadamard(0);
-        dbg!(&simulation);
         simulation.cnot(0, 1);
-        dbg!(&simulation);
         simulation.cnot(1, 2);
-        dbg!(&simulation);
         let measured_states = simulation.measure_all();
         measurements.push(measured_states);
-        break
     }
     evaluate(measurements);
 }
