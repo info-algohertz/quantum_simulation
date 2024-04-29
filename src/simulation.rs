@@ -189,11 +189,11 @@ fn toffoli_gate(
         amplitude000,
         amplitude001,
         amplitude010,
-        amplitude011,
+        amplitude111,
         amplitude100,
         amplitude101,
-        amplitude111,
         amplitude110,
+        amplitude011,
     )
 }
 
