@@ -25,7 +25,6 @@ fn produce_ghz_state(run_count: usize) {
         simulation.cnot(0, 1);
         let measured_states = simulation.measure_all();
         measurements.push(measured_states);
-        break
     }
     evaluate(measurements);
 }

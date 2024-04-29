@@ -145,7 +145,7 @@ fn cnot_gate(
     amplitude10: Complex<f64>,
     amplitude11: Complex<f64>,
 ) -> (Complex<f64>, Complex<f64>, Complex<f64>, Complex<f64>) {
-    (amplitude00, amplitude01, amplitude11, amplitude10)
+    (amplitude00, amplitude11, amplitude10, amplitude01)
 }
 
 fn cz_gate(
