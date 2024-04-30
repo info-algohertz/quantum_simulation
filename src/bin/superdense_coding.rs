@@ -28,8 +28,8 @@ fn send_and_receive(first_bit: bool, second_bit: bool) -> (bool, bool) {
 
     // Encode the message using the first qubit only:
     // 00 -> (1/sqrt(2))*(|00⟩ + |11⟩)
-    // 01 -> (1/sqrt(2))*(|01⟩ + |10⟩)
-    // 10 -> (1/sqrt(2))*(|00⟩ - |11⟩)
+    // 01 -> (1/sqrt(2))*(|00⟩ - |11⟩)
+    // 10 -> (1/sqrt(2))*(|01⟩ + |10⟩)
     // 11 -> (1/sqrt(2))*(|01⟩ - |10⟩)
     if first_bit {
         simulation.pauli_z(0);
