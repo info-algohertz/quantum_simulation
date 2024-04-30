@@ -72,7 +72,7 @@ fn main() {
             let (first_received_bit, second_received_bit) = send_and_receive(first_bit, second_bit);
             assert_eq!(first_bit, first_received_bit);
             assert_eq!(second_bit, second_received_bit);
-            println!(" received {}.", denote(first_bit, second_bit));
+            println!(" received {}.", denote(first_received_bit, second_received_bit));
         }
     }
 }
