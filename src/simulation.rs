@@ -258,6 +258,7 @@ impl QuantumSimulation {
         state_index
     }
 
+    // Measure all the qubits in the Z-basis.
     pub fn measure_all(&mut self) -> Vec<bool> {
         let measured_state_index = self._choose_state();
         let mut measured_states: Vec<bool> = Vec::with_capacity(self.qubit_count);
@@ -276,6 +277,7 @@ impl QuantumSimulation {
         measured_states
     }
 
+    // Measure the selected qubits in the Z-basis.
     pub fn measure(&mut self, qubit_numbers: Vec<usize>) -> Vec<bool> {
         for qubit_number in qubit_numbers.iter() {
             assert!(
