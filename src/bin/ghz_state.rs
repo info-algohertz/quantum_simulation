@@ -16,22 +16,30 @@ use quantum_simulation::simulation::QuantumSimulation;
 const QUBIT_COUNT: usize = 3;
 const RUN_COUNT: usize = 100;
 
-fn produce_ghz_state(run_count: usize) {
-    let mut simulation = QuantumSimulation::new(QUBIT_COUNT, 0u64);
-    let mut measurements = Vec::with_capacity(RUN_COUNT);
-    for _ in 0..run_count {
-        simulation.init_ground_state();
-        simulation.hadamard(0);
-        simulation.cnot(0, 1);
-        simulation.cnot(1, 2);
-        let measured_states = simulation.measure_all();
-        measurements.push(measured_states);
-    }
-    evaluate(measurements);
+// Entangle three qubits into a GHZ state (1/sqrt(2))*(|000⟩ + |111⟩).
+// Assume that the qubits are initialized to the state |000⟩.
+fn entangle_into_ghz_state(
+    simulation: &mut QuantumSimulation,
+    qubit0: usize,
+    qubit1: usize,
+    qubit2: usize,
+) {
+    simulation.hadamard(qubit0);
+    simulation.cnot(qubit0, qubit1);
+    simulation.cnot(qubit1, qubit2);
 }
 
 fn main() {
     println!("GHZ state:");
-    produce_ghz_state(RUN_COUNT);
+    let mut simulation = QuantumSimulation::new(QUBIT_COUNT, 0u64);
+    let mut measurements = Vec::with_capacity(RUN_COUNT);
+    for _ in 0..RUN_COUNT {
+        simulation.init_ground_state();
+        entangle_into_ghz_state(&mut simulation, 0, 1, 2);
+        let measured_states = simulation.measure_all();
+        measurements.push(measured_states);
+    }
+    evaluate(measurements);
+
     println!();
 }
