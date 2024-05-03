@@ -310,9 +310,9 @@ impl QuantumSimulation {
             possible_amplitude_indices.push(i);
         }
 
-        let bump_prob_factor = 1.0 / accumulated_probability;
+        let bump_amplitude_factor = (1.0 / accumulated_probability).sqrt();
         for i in possible_amplitude_indices.into_iter() {
-            self.amplitudes[i] = bump_prob_factor * self.amplitudes[i];
+            self.amplitudes[i] = bump_amplitude_factor * self.amplitudes[i];
         }
 
         measured_states
