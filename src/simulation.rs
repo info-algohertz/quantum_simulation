@@ -197,6 +197,39 @@ fn toffoli_gate(
     )
 }
 
+pub trait Simulation {
+    // Qubit initialization functions.
+    fn init_ground_state(&mut self);
+
+    // Qubit measurement functions.
+    // Measure all the qubits in the Z-basis.
+    fn measure_all(&mut self) -> Vec<bool>;
+    // Measure the selected qubits in the Z-basis.
+    fn measure(&mut self, qubit_numbers: Vec<usize>) -> Vec<bool>;
+
+    // 1-qubit gates.
+    fn pauli_x(&mut self, qubit_number: usize);
+    fn pauli_y(&mut self, qubit_number: usize);
+    fn pauli_z(&mut self, qubit_number: usize);
+    fn hadamard(&mut self, qubit_number: usize);
+    fn s(&mut self, qubit_number: usize);
+    fn t(&mut self, qubit_number: usize);
+
+    // 2-qubit gates.
+    fn cnot(&mut self, control_qubit_number: usize, target_qubit_number: usize);
+    fn cz(&mut self, control_qubit_number: usize, target_qubit_number: usize);
+    fn swap(&mut self, qubit_number0: usize, qubit_number1: usize);
+    fn apply_u_f(&mut self, f: fn(bool) -> bool, qubit_number0: usize, qubit_number1: usize);
+
+    // 3-qubit gates.
+    fn toffoli(
+        &mut self,
+        control_qubit_number0: usize,
+        control_qubit_number1: usize,
+        target_qubit_number: usize,
+    );
+}
+
 #[derive(Debug)]
 pub struct QuantumSimulation {
     qubit_count: usize,
@@ -205,23 +238,6 @@ pub struct QuantumSimulation {
 }
 
 impl QuantumSimulation {
-    pub fn new(qubit_count: usize, rnd_seed: u64) -> QuantumSimulation {
-        assert!(
-            qubit_count <= MAX_QUBIT_COUNT,
-            "The number of qubits in the simulation cannot exceed {}.",
-            MAX_QUBIT_COUNT
-        );
-
-        let mut simulation = QuantumSimulation {
-            qubit_count,
-            amplitudes: Vec::new(),
-            rng: StdRng::seed_from_u64(rnd_seed),
-        };
-        simulation.init_ground_state();
-
-        simulation
-    }
-
     pub fn init_ground_state(&mut self) {
         let qubits = ground_state_qubits(self.qubit_count);
         self.amplitudes = get_amplitudes(qubits);
@@ -513,6 +529,27 @@ impl QuantumSimulation {
             target_qubit_number,
         );
     }
+
+}
+
+impl QuantumSimulation {
+    pub fn new(qubit_count: usize, rnd_seed: u64) -> QuantumSimulation {
+        assert!(
+            qubit_count <= MAX_QUBIT_COUNT,
+            "The number of qubits in the simulation cannot exceed {}.",
+            MAX_QUBIT_COUNT
+        );
+
+        let mut simulation = QuantumSimulation {
+            qubit_count,
+            amplitudes: Vec::new(),
+            rng: StdRng::seed_from_u64(rnd_seed),
+        };
+        simulation.init_ground_state();
+
+        simulation
+    }
+
 }
 
 #[cfg(test)]
