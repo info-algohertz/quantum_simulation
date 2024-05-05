@@ -13,7 +13,7 @@ use rand::{Rng, SeedableRng};
 use std::f64::consts::PI;
 
 use crate::parity::create_u_f;
-use crate::gates::{
+use crate::gate::{
     pauli_x_gate,
     pauli_y_gate,
     pauli_z_gate,
