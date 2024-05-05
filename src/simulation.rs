@@ -13,18 +13,7 @@ use rand::{Rng, SeedableRng};
 use std::f64::consts::PI;
 
 use crate::parity::create_u_f;
-use crate::gate::{
-    pauli_x_gate,
-    pauli_y_gate,
-    pauli_z_gate,
-    hadamard_gate,
-    s_gate,
-    t_gate,
-    cnot_gate,
-    cz_gate,
-    swap_gate,
-    toffoli_gate,
-};
+use crate::gate;
 
 const MAX_QUBIT_COUNT: usize = 32;
 
@@ -265,27 +254,27 @@ impl QuantumSimulation {
     }
 
     pub fn pauli_x(&mut self, qubit_number: usize) {
-        self.apply_one_qubit_gate(pauli_x_gate, qubit_number);
+        self.apply_one_qubit_gate(gate::pauli_x_gate, qubit_number);
     }
 
     pub fn pauli_y(&mut self, qubit_number: usize) {
-        self.apply_one_qubit_gate(pauli_y_gate, qubit_number);
+        self.apply_one_qubit_gate(gate::pauli_y_gate, qubit_number);
     }
 
     pub fn pauli_z(&mut self, qubit_number: usize) {
-        self.apply_one_qubit_gate(pauli_z_gate, qubit_number);
+        self.apply_one_qubit_gate(gate::pauli_z_gate, qubit_number);
     }
 
     pub fn hadamard(&mut self, qubit_number: usize) {
-        self.apply_one_qubit_gate(hadamard_gate, qubit_number);
+        self.apply_one_qubit_gate(gate::hadamard_gate, qubit_number);
     }
 
     pub fn s(&mut self, qubit_number: usize) {
-        self.apply_one_qubit_gate(s_gate, qubit_number);
+        self.apply_one_qubit_gate(gate::s_gate, qubit_number);
     }
 
     pub fn t(&mut self, qubit_number: usize) {
-        self.apply_one_qubit_gate(t_gate, qubit_number);
+        self.apply_one_qubit_gate(gate::t_gate, qubit_number);
     }
 
     fn apply_two_qubit_gate<F>(
@@ -408,15 +397,15 @@ impl QuantumSimulation {
     }
 
     pub fn cnot(&mut self, control_qubit_number: usize, target_qubit_number: usize) {
-        self.apply_two_qubit_gate(cnot_gate, control_qubit_number, target_qubit_number);
+        self.apply_two_qubit_gate(gate::cnot_gate, control_qubit_number, target_qubit_number);
     }
 
     pub fn cz(&mut self, control_qubit_number: usize, target_qubit_number: usize) {
-        self.apply_two_qubit_gate(cz_gate, control_qubit_number, target_qubit_number);
+        self.apply_two_qubit_gate(gate::cz_gate, control_qubit_number, target_qubit_number);
     }
 
     pub fn swap(&mut self, qubit_number0: usize, qubit_number1: usize) {
-        self.apply_two_qubit_gate(swap_gate, qubit_number0, qubit_number1);
+        self.apply_two_qubit_gate(gate::swap_gate, qubit_number0, qubit_number1);
     }
 
     pub fn apply_u_f(&mut self, f: fn(bool) -> bool, qubit_number0: usize, qubit_number1: usize) {
@@ -431,7 +420,7 @@ impl QuantumSimulation {
         target_qubit_number: usize,
     ) {
         self.apply_three_qubit_gate(
-            toffoli_gate,
+            gate::toffoli_gate,
             control_qubit_number0,
             control_qubit_number1,
             target_qubit_number,
