@@ -42,11 +42,17 @@ pub(crate) fn hadamard(
     )
 }
 
-pub(crate) fn s(amplitude0: Complex<f64>, amplitude1: Complex<f64>) -> (Complex<f64>, Complex<f64>) {
+pub(crate) fn s(
+    amplitude0: Complex<f64>,
+    amplitude1: Complex<f64>,
+) -> (Complex<f64>, Complex<f64>) {
     (amplitude0, Complex::new(0.0, 1.0) * amplitude1)
 }
 
-pub(crate) fn t(amplitude0: Complex<f64>, amplitude1: Complex<f64>) -> (Complex<f64>, Complex<f64>) {
+pub(crate) fn t(
+    amplitude0: Complex<f64>,
+    amplitude1: Complex<f64>,
+) -> (Complex<f64>, Complex<f64>) {
     (
         amplitude0,
         Complex::new(INV_SQRT_2, INV_SQRT_2) * amplitude1,

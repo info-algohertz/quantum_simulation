@@ -12,8 +12,8 @@ use rand::rngs::StdRng;
 use rand::{Rng, SeedableRng};
 use std::f64::consts::PI;
 
-use crate::parity::create_u_f;
 use crate::gate;
+use crate::parity::create_u_f;
 
 const MAX_QUBIT_COUNT: usize = 32;
 
@@ -92,7 +92,6 @@ fn get_amplitudes(qubits: Vec<Qubit<f64>>) -> Vec<Complex<f64>> {
 
     amplitudes
 }
-
 
 pub trait Simulation {
     // Qubit initialization functions.
@@ -426,7 +425,6 @@ impl QuantumSimulation {
             target_qubit_number,
         );
     }
-
 }
 
 impl QuantumSimulation {
@@ -446,7 +444,6 @@ impl QuantumSimulation {
 
         simulation
     }
-
 }
 
 #[cfg(test)]
