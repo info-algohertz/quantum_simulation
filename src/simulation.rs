@@ -13,9 +13,20 @@ use rand::{Rng, SeedableRng};
 use std::f64::consts::PI;
 
 use crate::parity::create_u_f;
+use crate::gates::{
+    pauli_x_gate,
+    pauli_y_gate,
+    pauli_z_gate,
+    hadamard_gate,
+    s_gate,
+    t_gate,
+    cnot_gate,
+    cz_gate,
+    swap_gate,
+    toffoli_gate,
+};
 
 const MAX_QUBIT_COUNT: usize = 32;
-const INV_SQRT_2: f64 = 0.7071067811865475;
 
 pub type Qubit<T> = (Complex<T>, Complex<T>);
 
@@ -93,109 +104,6 @@ fn get_amplitudes(qubits: Vec<Qubit<f64>>) -> Vec<Complex<f64>> {
     amplitudes
 }
 
-fn pauli_x_gate(
-    amplitude0: Complex<f64>,
-    amplitude1: Complex<f64>,
-) -> (Complex<f64>, Complex<f64>) {
-    (amplitude1, amplitude0)
-}
-
-fn pauli_y_gate(
-    amplitude0: Complex<f64>,
-    amplitude1: Complex<f64>,
-) -> (Complex<f64>, Complex<f64>) {
-    (
-        Complex::new(0.0, -1.0) * amplitude1,
-        Complex::new(0.0, 1.0) * amplitude0,
-    )
-}
-
-fn pauli_z_gate(
-    amplitude0: Complex<f64>,
-    amplitude1: Complex<f64>,
-) -> (Complex<f64>, Complex<f64>) {
-    (amplitude0, -amplitude1)
-}
-
-fn hadamard_gate(
-    amplitude0: Complex<f64>,
-    amplitude1: Complex<f64>,
-) -> (Complex<f64>, Complex<f64>) {
-    (
-        INV_SQRT_2 * (amplitude0 + amplitude1),
-        INV_SQRT_2 * (amplitude0 - amplitude1),
-    )
-}
-
-fn s_gate(amplitude0: Complex<f64>, amplitude1: Complex<f64>) -> (Complex<f64>, Complex<f64>) {
-    (amplitude0, Complex::new(0.0, 1.0) * amplitude1)
-}
-
-fn t_gate(amplitude0: Complex<f64>, amplitude1: Complex<f64>) -> (Complex<f64>, Complex<f64>) {
-    (
-        amplitude0,
-        Complex::new(INV_SQRT_2, INV_SQRT_2) * amplitude1,
-    )
-}
-
-//CX gate
-fn cnot_gate(
-    amplitude00: Complex<f64>,
-    amplitude01: Complex<f64>,
-    amplitude10: Complex<f64>,
-    amplitude11: Complex<f64>,
-) -> (Complex<f64>, Complex<f64>, Complex<f64>, Complex<f64>) {
-    (amplitude00, amplitude11, amplitude10, amplitude01)
-}
-
-fn cz_gate(
-    amplitude00: Complex<f64>,
-    amplitude01: Complex<f64>,
-    amplitude10: Complex<f64>,
-    amplitude11: Complex<f64>,
-) -> (Complex<f64>, Complex<f64>, Complex<f64>, Complex<f64>) {
-    (amplitude00, amplitude01, amplitude10, -amplitude11)
-}
-
-fn swap_gate(
-    amplitude00: Complex<f64>,
-    amplitude01: Complex<f64>,
-    amplitude10: Complex<f64>,
-    amplitude11: Complex<f64>,
-) -> (Complex<f64>, Complex<f64>, Complex<f64>, Complex<f64>) {
-    (amplitude00, amplitude10, amplitude01, amplitude11)
-}
-
-fn toffoli_gate(
-    amplitude000: Complex<f64>,
-    amplitude001: Complex<f64>,
-    amplitude010: Complex<f64>,
-    amplitude011: Complex<f64>,
-    amplitude100: Complex<f64>,
-    amplitude101: Complex<f64>,
-    amplitude110: Complex<f64>,
-    amplitude111: Complex<f64>,
-) -> (
-    Complex<f64>,
-    Complex<f64>,
-    Complex<f64>,
-    Complex<f64>,
-    Complex<f64>,
-    Complex<f64>,
-    Complex<f64>,
-    Complex<f64>,
-) {
-    (
-        amplitude000,
-        amplitude001,
-        amplitude010,
-        amplitude111,
-        amplitude100,
-        amplitude101,
-        amplitude110,
-        amplitude011,
-    )
-}
 
 pub trait Simulation {
     // Qubit initialization functions.
