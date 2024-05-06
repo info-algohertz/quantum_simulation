@@ -18,19 +18,29 @@ use quantum_simulation::state_vector_simulation::QuantumSimulation;
 const QUBIT_COUNT: usize = 2;
 const RUN_COUNT: usize = 100;
 
+// Deutsch's Algorithm to find out the parity problem of the function f.
+// Assumes the auxiliary and the target qubits are initialized to the ground state.
+// Q0: ∣0⟩ -- |PX| -- |H| -- ∣-⟩ --|     | ----------- ∣-⟩
+//                                 | U_f |
+// Q1: ∣0⟩ ---------- |H| -------- |     | -- |H| -- = parity
+fn apply_deutsch_algo(
+    simulation: &mut dyn Simulation,
+    aux_qubit: usize,
+    target_qubit: usize,
+    f: fn(bool) -> bool) {
+    simulation.pauli_x(aux_qubit);
+    simulation.hadamard(aux_qubit);
+    simulation.hadamard(target_qubit);
+    simulation.apply_u_f(f, aux_qubit, target_qubit);
+    simulation.hadamard(1);
+}
+
 fn run_deutsch_algo(f: fn(bool) -> bool, run_count: usize) {
     let mut simulation = QuantumSimulation::new(QUBIT_COUNT, 0u64);
     let mut measurements = Vec::with_capacity(RUN_COUNT);
     for _ in 0..run_count {
-        // Q0: ∣0⟩ -- |PX| -- |H| -- ∣-⟩ --|     | ----------- ∣-⟩
-        //                                 | U_f |
-        // Q1: ∣0⟩ ---------- |H| -------- |     | -- |H| -- = parity
         simulation.init_ground_state();
-        simulation.pauli_x(0);
-        simulation.hadamard(0);
-        simulation.hadamard(1);
-        simulation.apply_u_f(f, 0, 1);
-        simulation.hadamard(1);
+        apply_deutsch_algo(&mut simulation, 0, 1, f);
         let measured_states = simulation.measure(vec![1]);
         measurements.push(measured_states);
     }
