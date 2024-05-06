@@ -102,6 +102,23 @@ pub struct QuantumSimulation {
 }
 
 impl QuantumSimulation {
+    pub fn new(qubit_count: usize, rnd_seed: u64) -> QuantumSimulation {
+        assert!(
+            qubit_count <= MAX_QUBIT_COUNT,
+            "The number of qubits in the simulation cannot exceed {}.",
+            MAX_QUBIT_COUNT
+        );
+
+        let mut simulation = QuantumSimulation {
+            qubit_count,
+            amplitudes: Vec::new(),
+            rng: StdRng::seed_from_u64(rnd_seed),
+        };
+        simulation.init_ground_state();
+
+        simulation
+    }
+
     pub fn init_ground_state(&mut self) {
         let qubits = ground_state_qubits(self.qubit_count);
         self.amplitudes = get_amplitudes(qubits);
@@ -392,25 +409,6 @@ impl QuantumSimulation {
             control_qubit_number1,
             target_qubit_number,
         );
-    }
-}
-
-impl QuantumSimulation {
-    pub fn new(qubit_count: usize, rnd_seed: u64) -> QuantumSimulation {
-        assert!(
-            qubit_count <= MAX_QUBIT_COUNT,
-            "The number of qubits in the simulation cannot exceed {}.",
-            MAX_QUBIT_COUNT
-        );
-
-        let mut simulation = QuantumSimulation {
-            qubit_count,
-            amplitudes: Vec::new(),
-            rng: StdRng::seed_from_u64(rnd_seed),
-        };
-        simulation.init_ground_state();
-
-        simulation
     }
 }
 
