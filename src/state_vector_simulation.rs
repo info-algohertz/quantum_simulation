@@ -46,11 +46,6 @@ impl QuantumSimulation {
         simulation
     }
 
-    pub fn init_ground_state(&mut self) {
-        let qubits = ground_state_qubits(self.qubit_count);
-        self.amplitudes = get_amplitudes(qubits);
-    }
-
     pub fn init_superposition_state(&mut self) {
         let qubits = superposition_state_qubits(self.qubit_count);
         self.amplitudes = get_amplitudes(qubits);
@@ -82,66 +77,6 @@ impl QuantumSimulation {
         state_index
     }
 
-    // Measure all the qubits in the Z-basis.
-    pub fn measure_all(&mut self) -> Vec<bool> {
-        let measured_state_index = self._choose_state();
-        let mut measured_states: Vec<bool> = Vec::with_capacity(self.qubit_count);
-        let mut qubits: Vec<Qubit<f64>> = Vec::with_capacity(self.qubit_count);
-        for qubit_number in 0..self.qubit_count {
-            let measured_state = measured_state_index & (1 << qubit_number) > 0;
-            measured_states.push(measured_state);
-            if measured_state {
-                qubits.push(excited_state_qubit());
-            } else {
-                qubits.push(ground_state_qubit());
-            }
-        }
-        self.amplitudes = get_amplitudes(qubits);
-
-        measured_states
-    }
-
-    // Measure the selected qubits in the Z-basis.
-    pub fn measure(&mut self, qubit_numbers: Vec<usize>) -> Vec<bool> {
-        for qubit_number in qubit_numbers.iter() {
-            assert!(
-                qubit_number < &self.qubit_count,
-                "The qubit number has to be less than the number of qubits {}.",
-                self.qubit_count
-            );
-        }
-
-        let measured_state_index = self._choose_state();
-        let mut measured_states: Vec<bool> = Vec::with_capacity(self.qubit_count);
-
-        for qubit_number in qubit_numbers.iter() {
-            let measured_state = measured_state_index & (1 << qubit_number) > 0;
-            measured_states.push(measured_state);
-        }
-
-        let mut accumulated_probability = 0.0;
-        let mut possible_amplitude_indices: Vec<usize> = Vec::with_capacity(self.amplitudes.len());
-        'state_iteration: for i in 0..self.amplitudes.len() {
-            for (j, &qubit_number) in qubit_numbers.iter().enumerate() {
-                let qubit_state = i & (1 << qubit_number) > 0;
-                if measured_states[j] != qubit_state {
-                    self.amplitudes[i] = Complex::new(0.0, 0.0);
-                    continue 'state_iteration;
-                }
-            }
-            let probability = self.amplitudes[i].norm_sqr();
-            accumulated_probability += probability;
-            possible_amplitude_indices.push(i);
-        }
-
-        let bump_amplitude_factor = (1.0 / accumulated_probability).sqrt();
-        for i in possible_amplitude_indices.into_iter() {
-            self.amplitudes[i] = bump_amplitude_factor * self.amplitudes[i];
-        }
-
-        measured_states
-    }
-
     fn apply_one_qubit_gate<F>(&mut self, one_qubit_gate: F, qubit_number: usize)
     where
         F: Fn(Complex<f64>, Complex<f64>) -> (Complex<f64>, Complex<f64>),
@@ -162,30 +97,6 @@ impl QuantumSimulation {
                 self.amplitudes[i1] = a1;
             }
         }
-    }
-
-    pub fn pauli_x(&mut self, qubit_number: usize) {
-        self.apply_one_qubit_gate(gate::pauli_x, qubit_number);
-    }
-
-    pub fn pauli_y(&mut self, qubit_number: usize) {
-        self.apply_one_qubit_gate(gate::pauli_y, qubit_number);
-    }
-
-    pub fn pauli_z(&mut self, qubit_number: usize) {
-        self.apply_one_qubit_gate(gate::pauli_z, qubit_number);
-    }
-
-    pub fn hadamard(&mut self, qubit_number: usize) {
-        self.apply_one_qubit_gate(gate::hadamard, qubit_number);
-    }
-
-    pub fn s(&mut self, qubit_number: usize) {
-        self.apply_one_qubit_gate(gate::s, qubit_number);
-    }
-
-    pub fn t(&mut self, qubit_number: usize) {
-        self.apply_one_qubit_gate(gate::t, qubit_number);
     }
 
     fn apply_two_qubit_gate<F>(
@@ -306,25 +217,116 @@ impl QuantumSimulation {
             }
         }
     }
+}
 
-    pub fn cnot(&mut self, control_qubit_number: usize, target_qubit_number: usize) {
+impl Simulation for QuantumSimulation {
+    fn init_ground_state(&mut self) {
+        let qubits = ground_state_qubits(self.qubit_count);
+        self.amplitudes = get_amplitudes(qubits);
+    }
+
+    // Measure all the qubits in the Z-basis.
+    fn measure_all(&mut self) -> Vec<bool> {
+        let measured_state_index = self._choose_state();
+        let mut measured_states: Vec<bool> = Vec::with_capacity(self.qubit_count);
+        let mut qubits: Vec<Qubit<f64>> = Vec::with_capacity(self.qubit_count);
+        for qubit_number in 0..self.qubit_count {
+            let measured_state = measured_state_index & (1 << qubit_number) > 0;
+            measured_states.push(measured_state);
+            if measured_state {
+                qubits.push(excited_state_qubit());
+            } else {
+                qubits.push(ground_state_qubit());
+            }
+        }
+        self.amplitudes = get_amplitudes(qubits);
+
+        measured_states
+    }
+
+    // Measure the selected qubits in the Z-basis.
+    fn measure(&mut self, qubit_numbers: Vec<usize>) -> Vec<bool> {
+        for qubit_number in qubit_numbers.iter() {
+            assert!(
+                qubit_number < &self.qubit_count,
+                "The qubit number has to be less than the number of qubits {}.",
+                self.qubit_count
+            );
+        }
+
+        let measured_state_index = self._choose_state();
+        let mut measured_states: Vec<bool> = Vec::with_capacity(self.qubit_count);
+
+        for qubit_number in qubit_numbers.iter() {
+            let measured_state = measured_state_index & (1 << qubit_number) > 0;
+            measured_states.push(measured_state);
+        }
+
+        let mut accumulated_probability = 0.0;
+        let mut possible_amplitude_indices: Vec<usize> = Vec::with_capacity(self.amplitudes.len());
+        'state_iteration: for i in 0..self.amplitudes.len() {
+            for (j, &qubit_number) in qubit_numbers.iter().enumerate() {
+                let qubit_state = i & (1 << qubit_number) > 0;
+                if measured_states[j] != qubit_state {
+                    self.amplitudes[i] = Complex::new(0.0, 0.0);
+                    continue 'state_iteration;
+                }
+            }
+            let probability = self.amplitudes[i].norm_sqr();
+            accumulated_probability += probability;
+            possible_amplitude_indices.push(i);
+        }
+
+        let bump_amplitude_factor = (1.0 / accumulated_probability).sqrt();
+        for i in possible_amplitude_indices.into_iter() {
+            self.amplitudes[i] = bump_amplitude_factor * self.amplitudes[i];
+        }
+
+        measured_states
+    }
+
+    fn pauli_x(&mut self, qubit_number: usize) {
+        self.apply_one_qubit_gate(gate::pauli_x, qubit_number);
+    }
+
+    fn pauli_y(&mut self, qubit_number: usize) {
+        self.apply_one_qubit_gate(gate::pauli_y, qubit_number);
+    }
+
+    fn pauli_z(&mut self, qubit_number: usize) {
+        self.apply_one_qubit_gate(gate::pauli_z, qubit_number);
+    }
+
+    fn hadamard(&mut self, qubit_number: usize) {
+        self.apply_one_qubit_gate(gate::hadamard, qubit_number);
+    }
+
+    fn s(&mut self, qubit_number: usize) {
+        self.apply_one_qubit_gate(gate::s, qubit_number);
+    }
+
+    fn t(&mut self, qubit_number: usize) {
+        self.apply_one_qubit_gate(gate::t, qubit_number);
+    }
+
+    fn cnot(&mut self, control_qubit_number: usize, target_qubit_number: usize) {
         self.apply_two_qubit_gate(gate::cnot, control_qubit_number, target_qubit_number);
     }
 
-    pub fn cz(&mut self, control_qubit_number: usize, target_qubit_number: usize) {
+    fn cz(&mut self, control_qubit_number: usize, target_qubit_number: usize) {
         self.apply_two_qubit_gate(gate::cz, control_qubit_number, target_qubit_number);
     }
 
-    pub fn swap(&mut self, qubit_number0: usize, qubit_number1: usize) {
+    fn swap(&mut self, qubit_number0: usize, qubit_number1: usize) {
         self.apply_two_qubit_gate(gate::swap, qubit_number0, qubit_number1);
     }
 
-    pub fn apply_u_f(&mut self, f: fn(bool) -> bool, qubit_number0: usize, qubit_number1: usize) {
+    fn apply_u_f(&mut self, f: fn(bool) -> bool, qubit_number0: usize, qubit_number1: usize) {
         let u_f = create_u_f(f);
         self.apply_two_qubit_gate(u_f, qubit_number0, qubit_number1);
     }
 
-    pub fn toffoli(
+    fn toffoli(
         &mut self,
         control_qubit_number0: usize,
         control_qubit_number1: usize,

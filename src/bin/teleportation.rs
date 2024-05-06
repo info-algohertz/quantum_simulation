@@ -10,6 +10,7 @@ Copyright © 2024 AlgoHertz. All rights reserved.
 */
 
 use quantum_simulation::evaluation::evaluate;
+use quantum_simulation::simulation::Simulation;
 use quantum_simulation::state_vector_simulation::QuantumSimulation;
 
 const QUBIT_COUNT: usize = 3;
