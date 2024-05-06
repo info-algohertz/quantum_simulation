@@ -19,7 +19,7 @@ const RUN_COUNT: usize = 100;
 
 // Entangle two qubits into a Bell state (1/sqrt(2))*(|00⟩ + |11⟩).
 // Assume that the qubits are initialized to the state |00⟩.
-fn entangle_into_bell_state(simulation: &mut QuantumSimulation, qubit0: usize, qubit1: usize) {
+fn entangle_into_bell_state(simulation: &mut dyn Simulation, qubit0: usize, qubit1: usize) {
     simulation.hadamard(qubit0);
     simulation.cnot(qubit0, qubit1);
 }
