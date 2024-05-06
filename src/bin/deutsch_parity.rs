@@ -27,12 +27,14 @@ fn apply_deutsch_algo(
     simulation: &mut dyn Simulation,
     aux_qubit: usize,
     target_qubit: usize,
-    f: fn(bool) -> bool) {
+    f: fn(bool) -> bool) -> Vec<bool> {
     simulation.pauli_x(aux_qubit);
     simulation.hadamard(aux_qubit);
     simulation.hadamard(target_qubit);
     simulation.apply_u_f(f, aux_qubit, target_qubit);
-    simulation.hadamard(1);
+    simulation.hadamard(target_qubit);
+
+    simulation.measure(vec![target_qubit])
 }
 
 fn run_deutsch_algo(f: fn(bool) -> bool, run_count: usize) {
@@ -40,8 +42,7 @@ fn run_deutsch_algo(f: fn(bool) -> bool, run_count: usize) {
     let mut measurements = Vec::with_capacity(RUN_COUNT);
     for _ in 0..run_count {
         simulation.init_ground_state();
-        apply_deutsch_algo(&mut simulation, 0, 1, f);
-        let measured_states = simulation.measure(vec![1]);
+        let measured_states = apply_deutsch_algo(&mut simulation, 0, 1, f);
         measurements.push(measured_states);
     }
     evaluate(measurements);
