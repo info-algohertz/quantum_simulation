@@ -35,7 +35,7 @@ fn main() {
     let mut simulation = QuantumSimulation::new(QUBIT_COUNT, 0u64);
     let mut measurements = Vec::with_capacity(RUN_COUNT);
     for _ in 0..RUN_COUNT {
-        simulation.init_ground_state();
+        simulation.reset();
         entangle_into_ghz_state(&mut simulation, 0, 1, 2);
         let measured_states = simulation.measure_all();
         measurements.push(measured_states);

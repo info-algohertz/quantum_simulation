@@ -19,7 +19,7 @@ fn main() {
     let mut simulation = QuantumSimulation::new(qubit_count, 0u64);
     let mut measurements = Vec::with_capacity(RUN_COUNT);
     for _ in 0..RUN_COUNT {
-        simulation.init_rnd_state();
+        simulation.reset();
         simulation.pauli_x(0);
         simulation.pauli_y(1);
         simulation.pauli_z(2);

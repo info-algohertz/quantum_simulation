@@ -23,7 +23,7 @@ const QUBIT_COUNT: usize = 2;
 fn send_and_receive(first_bit: bool, second_bit: bool) -> (bool, bool) {
     let mut simulation = QuantumSimulation::new(QUBIT_COUNT, 0u64);
     // Preparation - entangle the qubits into a Bell state (1/sqrt(2))*(|00⟩ + |11⟩).
-    simulation.init_ground_state();
+    simulation.reset();
     simulation.hadamard(0);
     simulation.cnot(0, 1);
 

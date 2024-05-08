@@ -41,7 +41,7 @@ impl QuantumSimulation {
             amplitudes: Vec::new(),
             rng: StdRng::seed_from_u64(rnd_seed),
         };
-        simulation.init_ground_state();
+        simulation.reset();
 
         simulation
     }
@@ -220,7 +220,7 @@ impl QuantumSimulation {
 }
 
 impl Simulation for QuantumSimulation {
-    fn init_ground_state(&mut self) {
+    fn reset(&mut self) {
         let qubits = ground_state_qubits(self.qubit_count);
         self.amplitudes = get_amplitudes(qubits);
     }

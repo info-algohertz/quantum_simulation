@@ -5,8 +5,8 @@ Copyright © 2024 AlgoHertz. All rights reserved.
 */
 
 pub trait Simulation {
-    // Qubit initialization functions.
-    fn init_ground_state(&mut self);
+    // Initialize the qubits into the ground state |0⟩.
+    fn reset(&mut self);
 
     // Qubit measurement functions.
     // Measure all the qubits in the Z-basis.

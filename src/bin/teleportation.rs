@@ -46,7 +46,7 @@ fn main() {
     let mut simulation = QuantumSimulation::new(QUBIT_COUNT, 0u64);
     let mut measurements = Vec::with_capacity(RUN_COUNT);
     for _ in 0..RUN_COUNT {
-        simulation.init_ground_state();
+        simulation.reset();
 
         // Prepare qubit 0. It will be teleported.
         simulation.hadamard(0);

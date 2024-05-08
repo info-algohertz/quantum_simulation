@@ -41,7 +41,7 @@ fn run_deutsch_algo(f: fn(bool) -> bool, run_count: usize) {
     let mut simulation = QuantumSimulation::new(QUBIT_COUNT, 0u64);
     let mut measurements = Vec::with_capacity(RUN_COUNT);
     for _ in 0..run_count {
-        simulation.init_ground_state();
+        simulation.reset();
         let measured_states = apply_deutsch_algo(&mut simulation, 0, 1, f);
         measurements.push(measured_states);
     }
