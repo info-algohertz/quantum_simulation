@@ -15,7 +15,7 @@ use crate::gate;
 use crate::parity::create_u_f;
 use crate::simulation::Simulation;
 use crate::state_vector_init::{
-    excited_state_qubit, get_amplitudes, get_ground_state_amplitudes, ground_state_qubit, Qubit,
+    get_amplitudes, get_ground_state_amplitudes, Qubit, ONE_QUBIT, ZERO_QUBIT,
 };
 
 const MAX_QUBIT_COUNT: usize = 32;
@@ -222,9 +222,9 @@ impl Simulation for QuantumSimulation {
             let measured_state = measured_state_index & (1 << qubit_number) > 0;
             measured_states.push(measured_state);
             if measured_state {
-                qubits.push(excited_state_qubit());
+                qubits.push(ONE_QUBIT);
             } else {
-                qubits.push(ground_state_qubit());
+                qubits.push(ZERO_QUBIT);
             }
         }
         self.amplitudes = get_amplitudes(qubits);

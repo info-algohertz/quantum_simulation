@@ -8,13 +8,8 @@ use num_complex::Complex;
 
 pub type Qubit<T> = (Complex<T>, Complex<T>);
 
-pub(crate) fn ground_state_qubit() -> Qubit<f64> {
-    (Complex::new(1.0, 0.0), Complex::new(0.0, 0.0))
-}
-
-pub(crate) fn excited_state_qubit() -> Qubit<f64> {
-    (Complex::new(0.0, 0.0), Complex::new(1.0, 0.0))
-}
+pub(crate) const ZERO_QUBIT: Qubit<f64> = (Complex::new(1.0, 0.0), Complex::new(0.0, 0.0));
+pub(crate) const ONE_QUBIT: Qubit<f64> = (Complex::new(0.0, 0.0), Complex::new(1.0, 0.0));
 
 // Return the amplitudes for case with the only possible state |0...0⟩.
 pub(crate) fn get_ground_state_amplitudes(qubit_count: usize) -> Vec<Complex<f64>> {
