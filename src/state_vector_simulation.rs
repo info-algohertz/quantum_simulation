@@ -334,7 +334,7 @@ mod tests {
     use super::*;
 
     fn _run_program1(simulation: &mut QuantumSimulation) {
-        simulation.init_rnd_state();
+        simulation.reset();
         simulation.pauli_x(0);
         simulation.pauli_y(1);
         simulation.pauli_z(2);
