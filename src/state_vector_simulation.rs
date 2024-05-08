@@ -15,8 +15,7 @@ use crate::gate;
 use crate::parity::create_u_f;
 use crate::simulation::Simulation;
 use crate::state_vector_init::{
-    excited_state_qubit, get_amplitudes, ground_state_qubit, ground_state_qubits, random_qubits,
-    superposition_state_qubits, Qubit,
+    excited_state_qubit, get_amplitudes, get_ground_state_amplitudes, ground_state_qubit, Qubit,
 };
 
 const MAX_QUBIT_COUNT: usize = 32;
@@ -44,16 +43,6 @@ impl QuantumSimulation {
         simulation.reset();
 
         simulation
-    }
-
-    pub fn init_superposition_state(&mut self) {
-        let qubits = superposition_state_qubits(self.qubit_count);
-        self.amplitudes = get_amplitudes(qubits);
-    }
-
-    pub fn init_rnd_state(&mut self) {
-        let qubits = random_qubits(&mut self.rng, self.qubit_count);
-        self.amplitudes = get_amplitudes(qubits)
     }
 
     fn _choose_state(&mut self) -> usize {
@@ -221,8 +210,7 @@ impl QuantumSimulation {
 
 impl Simulation for QuantumSimulation {
     fn reset(&mut self) {
-        let qubits = ground_state_qubits(self.qubit_count);
-        self.amplitudes = get_amplitudes(qubits);
+        self.amplitudes = get_ground_state_amplitudes(self.qubit_count)
     }
 
     // Measure all the qubits in the Z-basis.

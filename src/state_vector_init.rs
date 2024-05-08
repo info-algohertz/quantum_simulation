@@ -5,59 +5,27 @@ Copyright © 2024 AlgoHertz. All rights reserved.
 */
 
 use num_complex::Complex;
-use rand::rngs::StdRng;
-use rand::Rng;
-use std::f64::consts::PI;
 
 pub type Qubit<T> = (Complex<T>, Complex<T>);
 
-fn random_qubit(rng: &mut StdRng) -> Qubit<f64> {
-    let theta0: f64 = rng.gen_range(0.0..2.0 * PI);
-    let theta1: f64 = rng.gen_range(0.0..2.0 * PI);
-    let theta2: f64 = rng.gen_range(0.0..2.0 * PI);
-    let alpha = Complex::new(
-        theta0.cos() * theta1.cos() * theta2.cos(),
-        theta0.sin() * theta1.cos() * theta2.cos(),
-    );
-    let beta = Complex::new(theta1.sin() * theta2.cos(), theta2.sin());
-
-    (alpha, beta)
-}
-
-pub(crate) fn random_qubits(rng: &mut StdRng, n: usize) -> Vec<Qubit<f64>> {
-    let mut qubits: Vec<Qubit<f64>> = Vec::with_capacity(n);
-    for _ in 0..n {
-        qubits.push(random_qubit(rng));
-    }
-
-    qubits
-}
-
 pub(crate) fn ground_state_qubit() -> Qubit<f64> {
     (Complex::new(1.0, 0.0), Complex::new(0.0, 0.0))
-}
-
-pub(crate) fn ground_state_qubits(n: usize) -> Vec<Qubit<f64>> {
-    let mut qubits: Vec<Qubit<f64>> = Vec::with_capacity(n);
-    for _ in 0..n {
-        qubits.push(ground_state_qubit());
-    }
-
-    qubits
 }
 
 pub(crate) fn excited_state_qubit() -> Qubit<f64> {
     (Complex::new(0.0, 0.0), Complex::new(1.0, 0.0))
 }
 
-pub(crate) fn superposition_state_qubits(n: usize) -> Vec<Qubit<f64>> {
-    let mut qubits: Vec<Qubit<f64>> = Vec::with_capacity(n);
-    let sqrt_2_inv = 1.0 / 2f64.sqrt();
-    for _ in 0..n {
-        qubits.push((Complex::new(sqrt_2_inv, 0.0), Complex::new(sqrt_2_inv, 0.0)));
+// Return the amplitudes for case with the only possible state |0...0⟩.
+pub(crate) fn get_ground_state_amplitudes(qubit_count: usize) -> Vec<Complex<f64>> {
+    let state_count: usize = 2usize.pow(qubit_count as u32);
+    let mut amplitudes: Vec<Complex<f64>> = Vec::with_capacity(state_count);
+    amplitudes.push(Complex::new(1.0, 0.0));
+    for _ in 1..state_count {
+        amplitudes.push(Complex::new(0.0, 0.0));
     }
 
-    qubits
+    amplitudes
 }
 
 pub(crate) fn get_amplitudes(qubits: Vec<Qubit<f64>>) -> Vec<Complex<f64>> {

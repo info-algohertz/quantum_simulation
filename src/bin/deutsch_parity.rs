@@ -27,7 +27,8 @@ fn apply_deutsch_algo(
     simulation: &mut dyn Simulation,
     aux_qubit: usize,
     target_qubit: usize,
-    f: fn(bool) -> bool) -> Vec<bool> {
+    f: fn(bool) -> bool,
+) -> Vec<bool> {
     simulation.pauli_x(aux_qubit);
     simulation.hadamard(aux_qubit);
     simulation.hadamard(target_qubit);
