@@ -7,6 +7,7 @@ proportional only to the number of the qubits plus the number of the entanglemen
 Copyright © 2024 AlgoHertz. All rights reserved.
 */
 
+use num_complex::Complex;
 use rand::rngs::StdRng;
 use rand::SeedableRng;
 
@@ -21,7 +22,7 @@ pub struct QuantumSimulation {
     // All the virtual qubits.
     virt_qubits: Vec<Qubit<f64>>,
     // Each qubit state is defined by a probability weight and a reference to a virtual qubit.
-    qubit_states: Vec<(f64, usize)>,
+    qubit_states: Vec<Vec<(f64, usize)>>,
     rng: StdRng,
 }
 
@@ -50,7 +51,24 @@ impl QuantumSimulation {
         self.qubit_states.clear();
         for i in 0..self.qubit_count {
             self.virt_qubits.push(ZERO_QUBIT);
-            self.qubit_states.push((1.0, i));
+            self.qubit_states.push(vec![(1.0, i)]);
+        }
+    }
+
+    fn apply_one_qubit_gate<F>(&mut self, one_qubit_gate: F, qubit_number: usize)
+    where
+        F: Fn(Complex<f64>, Complex<f64>) -> (Complex<f64>, Complex<f64>),
+    {
+        assert!(
+            qubit_number < self.qubit_count,
+            "The qubit number has to be less than the number of qubits {}.",
+            self.qubit_count
+        );
+
+        for j in 0..self.qubit_states[qubit_number].len() {
+            let (_, vq_ref) = self.qubit_states[qubit_number][j];
+            let (a, b) = self.virt_qubits[vq_ref];
+            self.virt_qubits[vq_ref] = one_qubit_gate(a, b);
         }
     }
 
