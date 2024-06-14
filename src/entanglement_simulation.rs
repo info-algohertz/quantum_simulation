@@ -11,6 +11,7 @@ use num_complex::Complex;
 use rand::rngs::StdRng;
 use rand::SeedableRng;
 
+use crate::gate;
 use crate::state_vector_init::{Qubit, ZERO_QUBIT};
 
 const MAX_QUBIT_COUNT: usize = 32768;
@@ -70,6 +71,10 @@ impl QuantumSimulation {
             let (a, b) = self.virt_qubits[vq_ref];
             self.virt_qubits[vq_ref] = one_qubit_gate(a, b);
         }
+    }
+
+    pub fn pauli_x(&mut self, qubit_number: usize) {
+        self.apply_one_qubit_gate(gate::pauli_x, qubit_number);
     }
 
 }

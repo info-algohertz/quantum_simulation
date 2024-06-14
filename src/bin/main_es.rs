@@ -11,6 +11,8 @@ use quantum_simulation::entanglement_simulation::QuantumSimulation;
 
 fn main() {
     let qubit_count: usize = 3; // the number of qubits
-    let simulation = QuantumSimulation::new(qubit_count, 0u64);
+    let mut simulation = QuantumSimulation::new(qubit_count, 0u64);
+    dbg!(&simulation);
+    simulation.pauli_x(0);
     dbg!(&simulation);
 }
