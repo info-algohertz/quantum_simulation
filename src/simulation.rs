@@ -26,7 +26,6 @@ pub trait Simulation {
     fn cnot(&mut self, control_qubit_number: usize, target_qubit_number: usize);
     fn cz(&mut self, control_qubit_number: usize, target_qubit_number: usize);
     fn swap(&mut self, qubit_number0: usize, qubit_number1: usize);
-    fn apply_u_f(&mut self, f: fn(bool) -> bool, qubit_number0: usize, qubit_number1: usize);
 
     // 3-qubit gates.
     fn toffoli(
@@ -35,4 +34,9 @@ pub trait Simulation {
         control_qubit_number1: usize,
         target_qubit_number: usize,
     );
+
+    // Oracle gate.
+    fn apply_u_f<const N: usize, F>(&mut self, f: F, input_qubits: [usize; N], answer_qubit: usize)
+    where
+        F: Fn([bool; N]) -> bool;
 }

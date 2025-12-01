@@ -12,10 +12,9 @@ use rand::rngs::StdRng;
 use rand::{Rng, SeedableRng};
 
 use crate::gate;
-use crate::parity::create_u_f;
 use crate::simulation::Simulation;
 use crate::state_vector_init::{
-    get_amplitudes, get_ground_state_amplitudes, Qubit, ONE_QUBIT, ZERO_QUBIT,
+    ONE_QUBIT, Qubit, ZERO_QUBIT, get_amplitudes, get_ground_state_amplitudes,
 };
 
 const MAX_QUBIT_COUNT: usize = 32;
@@ -51,7 +50,7 @@ impl QuantumSimulation {
             .iter()
             .map(|amplitude| amplitude.norm_sqr())
             .collect();
-        let random_number = self.rng.gen::<f64>();
+        let random_number: f64 = self.rng.random();
         let mut accumulated_probability = 0.0;
         let mut state_index = 0;
 
@@ -309,11 +308,6 @@ impl Simulation for QuantumSimulation {
         self.apply_two_qubit_gate(gate::swap, qubit_number0, qubit_number1);
     }
 
-    fn apply_u_f(&mut self, f: fn(bool) -> bool, qubit_number0: usize, qubit_number1: usize) {
-        let u_f = create_u_f(f);
-        self.apply_two_qubit_gate(u_f, qubit_number0, qubit_number1);
-    }
-
     fn toffoli(
         &mut self,
         control_qubit_number0: usize,
@@ -326,6 +320,41 @@ impl Simulation for QuantumSimulation {
             control_qubit_number1,
             target_qubit_number,
         );
+    }
+
+    fn apply_u_f<const N: usize, F>(&mut self, f: F, input_qubits: [usize; N], answer_qubit: usize)
+    where
+        F: Fn([bool; N]) -> bool,
+    {
+        let mut mask_x = [0usize; N];
+        for j in 0..N {
+            mask_x[j] = 1usize << input_qubits[j];
+        }
+        let mask_y = 1usize << answer_qubit;
+
+        for i0 in 0..self.amplitudes.len() {
+            //Get state for y. If 1, then continue.
+            if i0 & mask_y != 0 {
+                continue;
+            }
+
+            //Get state for x.
+            let mut x = [false; N];
+            for j in 0..N {
+                x[j] = i0 & mask_x[j] != 0;
+            }
+
+            // Note: y XOR f(x) = y iff f(x) = 0.
+            if !f(x) {
+                continue;
+            }
+
+            //Swap the amplitudes of the states where y=0 and y=1.
+            let i1 = i0 | mask_y;
+            let a = self.amplitudes[i0];
+            self.amplitudes[i0] = self.amplitudes[i1];
+            self.amplitudes[i1] = a;
+        }
     }
 }
 

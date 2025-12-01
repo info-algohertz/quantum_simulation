@@ -17,8 +17,8 @@ const QUBIT_COUNT: usize = 3;
 const RUN_COUNT: usize = 1000;
 
 // Teleport the quantum information from the source qubit into the destination qubit using an auxiliary qubit.
-fn teleport(
-    simulation: &mut dyn Simulation,
+fn teleport<S: Simulation>(
+    simulation: &mut S,
     src_qubit: usize,
     aux_qubit: usize,
     dest_qubit: usize,

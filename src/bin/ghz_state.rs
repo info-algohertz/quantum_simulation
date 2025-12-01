@@ -19,8 +19,8 @@ const RUN_COUNT: usize = 100;
 
 // Entangle three qubits into a GHZ state (1/sqrt(2))*(|000⟩ + |111⟩).
 // Assume that the qubits are initialized to the state |000⟩.
-fn entangle_into_ghz_state(
-    simulation: &mut dyn Simulation,
+fn entangle_into_ghz_state<S: Simulation>(
+    simulation: &mut S,
     qubit0: usize,
     qubit1: usize,
     qubit2: usize,
