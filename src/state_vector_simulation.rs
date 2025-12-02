@@ -273,11 +273,7 @@ impl Simulation for QuantumSimulation {
     }
 
     fn pauli_x(&mut self, qubit_number: usize) {
-        //dbg!(&self.amplitudes);
-        //println!("Apply PX:");
-        //dbg!(&qubit_number);
         self.apply_one_qubit_gate(gate::pauli_x, qubit_number);
-        //dbg!(&self.amplitudes);
     }
 
     fn pauli_y(&mut self, qubit_number: usize) {
@@ -289,10 +285,7 @@ impl Simulation for QuantumSimulation {
     }
 
     fn hadamard(&mut self, qubit_number: usize) {
-        //println!("Apply H:");
-        //dbg!(&qubit_number);
         self.apply_one_qubit_gate(gate::hadamard, qubit_number);
-        //dbg!(&self.amplitudes);
     }
 
     fn s(&mut self, qubit_number: usize) {
@@ -338,9 +331,7 @@ impl Simulation for QuantumSimulation {
             mask_x[j] = 1usize << input_qubits[j];
         }
         let mask_y = 1usize << answer_qubit;
-        //dbg!(&self.amplitudes);
         for i0 in 0..self.amplitudes.len() {
-            //println!("--------------------- {:}", i0);
             //Get state for y. If 1, then continue.
             if i0 & mask_y != 0 {
                 continue;
@@ -351,23 +342,18 @@ impl Simulation for QuantumSimulation {
             for j in 0..N {
                 x[j] = i0 & mask_x[j] != 0;
             }
-            //dbg!(&x, f(x));            
 
             // Note: y XOR f(x) = y iff f(x) = 0.
             if !f(x) {
                 continue;
             }
-            //println!("f(x) = 1");
 
             //Swap the amplitudes of the states where y=0 and y=1.
             let i1 = i0 | mask_y;
             let a = self.amplitudes[i0];
-            //dbg!(&i0, &i1, &self.amplitudes[i0], &self.amplitudes[i1]);
             self.amplitudes[i0] = self.amplitudes[i1];
             self.amplitudes[i1] = a;
         }
-        //println!("END of U_f:");
-        //dbg!(&self.amplitudes);
     }
 }
 

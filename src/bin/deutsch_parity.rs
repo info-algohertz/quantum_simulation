@@ -19,28 +19,27 @@ const QUBIT_COUNT: usize = 2;
 const RUN_COUNT: usize = 100;
 
 // Deutsch's Algorithm to find out the parity problem of the function f.
-// Assumes the auxiliary and the target qubits are initialized to the ground state.
-// Q0: ∣0⟩ -- |PX| -- |H| -- ∣-⟩ --|     | ----------- ∣-⟩
-//                                 | U_f |
-// Q1: ∣0⟩ ---------- |H| -------- |     | -- |H| -- = parity
-
-// Q0: ∣0⟩ ---------- |H| -- |+⟩ --|     | -- |H| -- = parity, x, should be measured, target
-//                                 | U_f |
-// Q1: ∣0⟩ -- |PX| -- |H| -- ∣-⟩ --|     | ----------- ∣-⟩, y, aux
+// Assumes the input and the answer qubits are initialized to the ground state.
+// The input qubit is tha target of the measurement.
+// The answer qubit is just auxiliary for U_f, not used for the measurement.
+//
+// Q0 (input qubit):   ∣0⟩ ---------- |H| -- |+⟩ --|     |-- |H| -- = parity
+//                                                 | U_f |
+// Q1 (answer qubit):  ∣0⟩ -- |PX| -- |H| -- ∣-⟩ --|     |----------- ∣-⟩
 
 fn apply_deutsch_algo<S: Simulation>(
     simulation: &mut S,
-    aux_qubit: usize,
-    target_qubit: usize,
+    input_qubit: usize,
+    answer_qubit: usize,
     f: fn(bool) -> bool,
 ) -> Vec<bool> {
-    simulation.pauli_x(aux_qubit);
-    simulation.hadamard(aux_qubit);
-    simulation.hadamard(target_qubit);
-    simulation.apply_u_f(move |x| f(x[0]), [target_qubit], aux_qubit);
-    simulation.hadamard(target_qubit);
+    simulation.pauli_x(answer_qubit);
+    simulation.hadamard(answer_qubit);
+    simulation.hadamard(input_qubit);
+    simulation.apply_u_f(move |x| f(x[0]), [input_qubit], answer_qubit);
+    simulation.hadamard(input_qubit);
 
-    simulation.measure(vec![target_qubit])
+    simulation.measure(vec![input_qubit])
 }
 
 fn run_deutsch_algo(f: fn(bool) -> bool, run_count: usize) {
