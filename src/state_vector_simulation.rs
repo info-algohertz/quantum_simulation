@@ -322,15 +322,22 @@ impl Simulation for QuantumSimulation {
         );
     }
 
-    fn apply_u_f<const N: usize, F>(&mut self, f: F, input_qubits: [usize; N], answer_qubit: usize)
-    where
-        F: Fn([bool; N]) -> bool,
+    fn apply_u_f<const N_IN: usize, const N_OUT: usize, F>(
+        &mut self,
+        f: F,
+        input_qubits: [usize; N_IN],
+        answer_qubits: [usize; N_OUT],
+    ) where
+        F: Fn([bool; N_IN]) -> [bool; N_OUT],
     {
-        let mut mask_x = [0usize; N];
-        for j in 0..N {
+        if N_OUT != 1 {
+            panic!("Not implemented!");
+        }
+        let mut mask_x = [0usize; N_IN];
+        for j in 0..N_IN {
             mask_x[j] = 1usize << input_qubits[j];
         }
-        let mask_y = 1usize << answer_qubit;
+        let mask_y = 1usize << answer_qubits[0];
         for i0 in 0..self.amplitudes.len() {
             //Get state for y. If 1, then continue.
             if i0 & mask_y != 0 {
@@ -338,13 +345,13 @@ impl Simulation for QuantumSimulation {
             }
 
             //Get state for x.
-            let mut x = [false; N];
-            for j in 0..N {
+            let mut x = [false; N_IN];
+            for j in 0..N_IN {
                 x[j] = i0 & mask_x[j] != 0;
             }
 
             // Note: y XOR f(x) = y iff f(x) = 0.
-            if !f(x) {
+            if !f(x)[0] {
                 continue;
             }
 

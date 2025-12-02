@@ -36,7 +36,11 @@ pub trait Simulation {
     );
 
     // Oracle gate.
-    fn apply_u_f<const N: usize, F>(&mut self, f: F, input_qubits: [usize; N], answer_qubit: usize)
-    where
-        F: Fn([bool; N]) -> bool;
+    fn apply_u_f<const N_IN: usize, const N_OUT: usize, F>(
+        &mut self,
+        f: F,
+        input_qubits: [usize; N_IN],
+        answer_qubits: [usize; N_OUT],
+    ) where
+        F: Fn([bool; N_IN]) -> [bool; N_OUT];
 }

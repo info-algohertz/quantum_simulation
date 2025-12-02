@@ -36,7 +36,7 @@ fn apply_deutsch_algo<S: Simulation>(
     simulation.pauli_x(answer_qubit);
     simulation.hadamard(answer_qubit);
     simulation.hadamard(input_qubit);
-    simulation.apply_u_f(move |x| f(x[0]), [input_qubit], answer_qubit);
+    simulation.apply_u_f(move |x| [f(x[0])], [input_qubit], [answer_qubit]);
     simulation.hadamard(input_qubit);
 
     simulation.measure(vec![input_qubit])

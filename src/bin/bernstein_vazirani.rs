@@ -39,7 +39,7 @@ where
     for i in 0..N {
         simulation.hadamard(input_qubits[i]);
     }
-    simulation.apply_u_f(f, input_qubits, answer_qubit);
+    simulation.apply_u_f(move |x| [f(x)], input_qubits, [answer_qubit]);
     for i in 0..N {
         simulation.hadamard(input_qubits[i]);
     }
