@@ -80,9 +80,27 @@ macro_rules! make_dot_product_fn {
 }
 
 fn main() {
-    const SECRET: [bool; 3] = [true, false, true];
-    make_dot_product_fn!(oracle, SECRET);
-    println!("Bernstein-Vazirani algorithm on secret mask: {:?}", SECRET);
-    run_bernstein_vazirani_algo(oracle, RUN_COUNT);
+    const SECRET3: [bool; 3] = [true, false, true];
+    make_dot_product_fn!(oracle3, SECRET3);
+    println!("Bernstein-Vazirani algorithm on secret mask: {:?}", SECRET3);
+    run_bernstein_vazirani_algo(oracle3, RUN_COUNT);
+    println!();
+
+    const SECRET4: [bool; 4] = [true, false, false, true];
+    make_dot_product_fn!(oracle4, SECRET4);
+    println!("Bernstein-Vazirani algorithm on secret mask: {:?}", SECRET4);
+    run_bernstein_vazirani_algo(oracle4, RUN_COUNT);
+    println!();
+
+    const SECRET5: [bool; 5] = [true, true, false, false, true];
+    make_dot_product_fn!(oracle5, SECRET5);
+    println!("Bernstein-Vazirani algorithm on secret mask: {:?}", SECRET5);
+    run_bernstein_vazirani_algo(oracle5, RUN_COUNT);
+    println!();
+
+    const SECRET6: [bool; 6] = [true, true, false, false, true, false];
+    make_dot_product_fn!(oracle6, SECRET6);
+    println!("Bernstein-Vazirani algorithm on secret mask: {:?}", SECRET6);
+    run_bernstein_vazirani_algo(oracle6, RUN_COUNT);
     println!();
 }
