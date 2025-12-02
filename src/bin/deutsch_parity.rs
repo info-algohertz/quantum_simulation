@@ -23,6 +23,11 @@ const RUN_COUNT: usize = 100;
 // Q0: ∣0⟩ -- |PX| -- |H| -- ∣-⟩ --|     | ----------- ∣-⟩
 //                                 | U_f |
 // Q1: ∣0⟩ ---------- |H| -------- |     | -- |H| -- = parity
+
+// Q0: ∣0⟩ ---------- |H| -- |+⟩ --|     | -- |H| -- = parity, x, should be measured, target
+//                                 | U_f |
+// Q1: ∣0⟩ -- |PX| -- |H| -- ∣-⟩ --|     | ----------- ∣-⟩, y, aux
+
 fn apply_deutsch_algo<S: Simulation>(
     simulation: &mut S,
     aux_qubit: usize,
@@ -32,7 +37,7 @@ fn apply_deutsch_algo<S: Simulation>(
     simulation.pauli_x(aux_qubit);
     simulation.hadamard(aux_qubit);
     simulation.hadamard(target_qubit);
-    simulation.apply_u_f(move |x| f(x[0]), [aux_qubit], target_qubit);
+    simulation.apply_u_f(move |x| f(x[0]), [target_qubit], aux_qubit);
     simulation.hadamard(target_qubit);
 
     simulation.measure(vec![target_qubit])
