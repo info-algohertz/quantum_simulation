@@ -330,35 +330,69 @@ impl Simulation for QuantumSimulation {
     ) where
         F: Fn([bool; N_IN]) -> [bool; N_OUT],
     {
-        if N_OUT != 1 {
-            panic!("Not implemented!");
+        if N_OUT == 0 {
+            return;
         }
+        for j in 0..N_IN {
+            assert!(
+                input_qubits[j] < self.qubit_count,
+                "The qubit number has to be less than the number of qubits {}.",
+                self.qubit_count
+            );
+        }
+        for j in 0..N_OUT {
+            assert!(
+                answer_qubits[j] < self.qubit_count,
+                "The qubit number has to be less than the number of qubits {}.",
+                self.qubit_count
+            );
+        }
+        //TODO make sure that the function works not only with the unique qubit numbers.
+
         let mut mask_x = [0usize; N_IN];
         for j in 0..N_IN {
             mask_x[j] = 1usize << input_qubits[j];
         }
-        let mask_y = 1usize << answer_qubits[0];
+        let mut mask_y = [0usize; N_OUT];
+        for j in 0..N_OUT {
+            mask_y[j] = 1usize << answer_qubits[j];
+        }
+        let mut new_amplitudes: Vec<(usize, Complex<f64>)> = Vec::new();
         for i0 in 0..self.amplitudes.len() {
-            //Get state for y. If 1, then continue.
-            if i0 & mask_y != 0 {
-                continue;
-            }
-
             //Get state for x.
             let mut x = [false; N_IN];
             for j in 0..N_IN {
                 x[j] = i0 & mask_x[j] != 0;
             }
 
-            // Note: y XOR f(x) = y iff f(x) = 0.
-            if !f(x)[0] {
+            //Get state for y.
+            let mut y0 = [false; N_OUT];
+            for j in 0..N_OUT {
+                y0[j] = i0 & mask_y[j] != 0;
+            }
+
+            // Note: if y XOR f(x) = y, then no state swap.
+            let y1 = f(x);
+            if y0 == y1 {
                 continue;
             }
 
-            //Swap the amplitudes of the states where y=0 and y=1.
-            let i1 = i0 | mask_y;
-            let a = self.amplitudes[i0];
-            self.amplitudes[i0] = self.amplitudes[i1];
+            // Calculate the index of the output state to be swapped with the input state.
+            let mut i1 = i0;
+            for j in 0..N_OUT {
+                if y0[j] != y1[j] {
+                    if y1[j] {
+                        i1 |= mask_y[j];
+                    } else {
+                        i1 ^= mask_y[j];
+                    }
+                }
+            }
+            new_amplitudes.push((i1, self.amplitudes[i0]));
+        }
+
+        // Update the amplitudes in accordance with state swapping.
+        for (i1, a) in new_amplitudes {
             self.amplitudes[i1] = a;
         }
     }
