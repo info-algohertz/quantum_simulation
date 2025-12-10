@@ -21,9 +21,9 @@ const RUN_COUNT: usize = 100;
 // The input qubits are tha target of the measurement.
 // The answer qubit is just auxiliary for U_f, not used for the measurement.
 //
-// Q0, Q1, Q(n-1) (input qubits):  ∣0⟩ ---------- |H| -- |+⟩ --|     |-- |H| -- = measurement
-//                                                             | U_f |
-// Qn (answer qubit):              ∣0⟩ -- |PX| -- |H| -- ∣-⟩ --|     |----------- ∣-⟩
+// Q0, ..., Q(n-1) (input qubits):  ∣0⟩ ---------- |H| -- |+⟩ --|     |-- |H| -- = measurement
+//                                                              | U_f |
+// Qn (answer qubit):               ∣0⟩ -- |PX| -- |H| -- ∣-⟩ --|     |----------- ∣-⟩
 
 fn apply_bernstein_vazirani_algo<const N: usize, F, S: Simulation>(
     simulation: &mut S,
