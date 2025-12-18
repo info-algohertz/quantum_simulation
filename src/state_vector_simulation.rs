@@ -10,6 +10,7 @@ Copyright © 2024 AlgoHertz. All rights reserved.
 use num_complex::Complex;
 use rand::rngs::StdRng;
 use rand::{Rng, SeedableRng};
+use std::collections::HashSet;
 
 use crate::gate;
 use crate::simulation::Simulation;
@@ -322,6 +323,10 @@ impl Simulation for QuantumSimulation {
         );
     }
 
+    // Apply an oracle gate of the function f to the input and answer qubits.
+    // input qubits:  ∣x⟩---|     |---∣x⟩
+    //                      | U_f |
+    // answer qubits: ∣y⟩---|     |---∣y ⊕ f(x)⟩
     fn apply_u_f<const N_IN: usize, const N_OUT: usize, F>(
         &mut self,
         f: F,
@@ -347,7 +352,14 @@ impl Simulation for QuantumSimulation {
                 self.qubit_count
             );
         }
-        //TODO make sure that the function works not only with the unique qubit numbers.
+        let mut qubit_set = HashSet::from(input_qubits);
+        qubit_set.extend(answer_qubits);
+        assert!(
+            qubit_set.len() == N_IN + N_OUT,
+            "The input and answer qubits have to be unique, but:\ninput qubits: {:?},\nanswer qubits: {:?}.",
+            input_qubits,
+            answer_qubits,
+        );
 
         let mut mask_x = [0usize; N_IN];
         for j in 0..N_IN {
@@ -388,12 +400,13 @@ impl Simulation for QuantumSimulation {
                     }
                 }
             }
+            new_amplitudes.push((i0, self.amplitudes[i1]));
             new_amplitudes.push((i1, self.amplitudes[i0]));
         }
 
         // Update the amplitudes in accordance with state swapping.
-        for (i1, a) in new_amplitudes {
-            self.amplitudes[i1] = a;
+        for (i, a) in new_amplitudes {
+            self.amplitudes[i] = a;
         }
     }
 }
@@ -434,6 +447,69 @@ mod tests {
             assert_eq!(measurements012[1], measurements1[0]);
             assert_eq!(measurements012[0], measurements02[0]);
             assert_eq!(measurements012[2], measurements02[1]);
+        }
+    }
+
+    fn id<const N: usize>(x: [bool; N]) -> [bool; N] {
+        x
+    }
+
+    fn not<const N: usize>(x: [bool; N]) -> [bool; N] {
+        let mut y = [false; N];
+        for i in 0..N {
+            y[i] = !x[i];
+        }
+        y
+    }
+
+    fn reverse<const N: usize>(x: [bool; N]) -> [bool; N] {
+        let mut y = [false; N];
+        for i in 0..N {
+            y[i] = x[N - i - 1];
+        }
+        y
+    }
+
+    #[test]
+    fn u_f_oracle() {
+        let qubit_count: usize = 2;
+        let input_qubit: usize = 0;
+        let answer_qubit: usize = 1;
+        let mut simulation = QuantumSimulation::new(qubit_count, 0u64);
+        let fs = [id, not];
+        
+        for i in 0..fs.len() {
+            println!("Testing function number {}...", i);
+            let f = fs[i];
+            for x in [false, true] {
+                for y in [false, true] {
+                    simulation.reset();
+                    if x {
+                        simulation.pauli_x(input_qubit);
+                    }
+                    if y {
+                        simulation.pauli_y(answer_qubit);
+                    }
+                    simulation.apply_u_f(f, [input_qubit], [answer_qubit]);
+                    let measurements = simulation.measure_all();
+                    assert_eq!(
+                        measurements[input_qubit], x,
+                        "Failed at x={}, y={}, input_qubit measurement mismatch",
+                        x, y
+                    );
+
+                    assert_eq!(
+                        measurements[answer_qubit],
+                        y ^ f([x])[0],
+                        "Failed at x={}, y={}, f(x)={}, expected y⊕f(x)={}, but got {}",
+                        x,
+                        y,
+                        f([x])[0],
+                        y ^ f([x])[0],
+                        measurements[answer_qubit]
+                    );
+                }
+            }
         }
     }
 }

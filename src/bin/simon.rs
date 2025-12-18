@@ -14,7 +14,7 @@ use quantum_simulation::evaluation::evaluate;
 use quantum_simulation::simulation::Simulation;
 use quantum_simulation::state_vector_simulation::QuantumSimulation;
 
-const RUN_COUNT: usize = 100;
+const RUN_COUNT: usize = 1000;
 
 // Simon's Algorithm to find the secret XOR mask s of a function f.
 // Assumes the input and the answer qubits are initialized to the ground state.
