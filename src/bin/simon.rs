@@ -14,7 +14,7 @@ use quantum_simulation::evaluation::evaluate;
 use quantum_simulation::simulation::Simulation;
 use quantum_simulation::state_vector_simulation::QuantumSimulation;
 
-const RUN_COUNT: usize = 1000;
+const RUN_COUNT: usize = 100;
 
 // Simon's Algorithm to find the secret XOR mask s of a function f.
 // Assumes the input and the answer qubits are initialized to the ground state.
@@ -41,7 +41,7 @@ where
         simulation.hadamard(input_qubits[i]);
     }
 
-    simulation.measure_all()
+    simulation.measure(Vec::from(input_qubits))
 }
 
 fn run_simons_algo<const N: usize, F>(f: F, run_count: usize)
@@ -84,7 +84,7 @@ fn not<const N: usize>(x: [bool; N]) -> [bool; N] {
 fn shift<const N: usize>(x: [bool; N], n: usize) -> [bool; N] {
     let mut y = [false; N];
     for i in 0..N {
-        y[i + n % N] = x[i];
+        y[(i + n) % N] = x[i];
     }
     y
 }
@@ -102,5 +102,17 @@ fn main() {
     let oracle3 = move |x| function(x, SECRET3, &id);
     println!("Simon's algorithm on secret mask: {:?}", SECRET3);
     run_simons_algo(oracle3, RUN_COUNT);
+    println!();
+
+    const SECRET4: [bool; 4] = [true, true, false, true];
+    let oracle4 = move |x| function(x, SECRET4, &not);
+    println!("Simon's algorithm on secret mask: {:?}", SECRET4);
+    run_simons_algo(oracle4, RUN_COUNT);
+    println!();
+
+    const SECRET5: [bool; 5] = [true, false, false, true, true];
+    let oracle5 = move |x| function(x, SECRET5, |x2| shift(x2, 1));
+    println!("Simon's algorithm on secret mask: {:?}", SECRET5);
+    run_simons_algo(oracle5, RUN_COUNT);
     println!();
 }
