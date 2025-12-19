@@ -17,6 +17,8 @@ use quantum_simulation::state_vector_simulation::QuantumSimulation;
 const RUN_COUNT: usize = 100;
 
 // Simon's Algorithm to find the secret XOR mask s of a function f.
+// The algorithm finds examples of z such that s⋅z=0.
+// Using the n independet vectors z as n equations, we can find the unique non-trivial s.
 // Assumes the input and the answer qubits are initialized to the ground state.
 // Both the input and answer qubits are tha targets of the measurement.
 //
