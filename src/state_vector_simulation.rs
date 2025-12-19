@@ -20,6 +20,14 @@ use crate::state_vector_init::{
 
 const MAX_QUBIT_COUNT: usize = 32;
 
+fn xor<const N: usize>(a: [bool; N], b: [bool; N]) -> [bool; N] {
+    let mut c = [false; N];
+    for i in 0..N {
+        c[i] = a[i]^b[i];
+    }
+    c
+}
+
 #[derive(Debug)]
 pub struct QuantumSimulation {
     qubit_count: usize,
@@ -382,12 +390,15 @@ impl Simulation for QuantumSimulation {
             for j in 0..N_OUT {
                 y0[j] = i0 & mask_y[j] != 0;
             }
-
-            // Note: if y XOR f(x) = y, then no state swap.
-            let y1 = f(x);
+        
+            // U_f: |y⟩|x⟩ -> ∣y ⊕ f(x)⟩∣x⟩
+            // If |y⟩ = ∣y ⊕ f(x)⟩, then no swap.
+            let y1 = xor(y0, f(x));
             if y0 == y1 {
                 continue;
             }
+            
+            dbg!(x, y0, y1);
 
             // Calculate the index of the output state to be swapped with the input state.
             let mut i1 = i0;
@@ -400,14 +411,17 @@ impl Simulation for QuantumSimulation {
                     }
                 }
             }
-            new_amplitudes.push((i0, self.amplitudes[i1]));
             new_amplitudes.push((i1, self.amplitudes[i0]));
         }
 
+        println!("Updating amplitudes...");
+        println!("============================================");
+        dbg!(&self.amplitudes);
         // Update the amplitudes in accordance with state swapping.
         for (i, a) in new_amplitudes {
             self.amplitudes[i] = a;
         }
+        dbg!(&self.amplitudes);
     }
 }
 
