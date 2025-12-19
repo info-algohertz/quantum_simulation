@@ -23,7 +23,7 @@ const MAX_QUBIT_COUNT: usize = 32;
 fn xor<const N: usize>(a: [bool; N], b: [bool; N]) -> [bool; N] {
     let mut c = [false; N];
     for i in 0..N {
-        c[i] = a[i]^b[i];
+        c[i] = a[i] ^ b[i];
     }
     c
 }
@@ -390,14 +390,14 @@ impl Simulation for QuantumSimulation {
             for j in 0..N_OUT {
                 y0[j] = i0 & mask_y[j] != 0;
             }
-        
+
             // U_f: |y⟩|x⟩ -> ∣y ⊕ f(x)⟩∣x⟩
             // If |y⟩ = ∣y ⊕ f(x)⟩, then no swap.
             let y1 = xor(y0, f(x));
             if y0 == y1 {
                 continue;
             }
-            
+
             dbg!(x, y0, y1);
 
             // Calculate the index of the output state to be swapped with the input state.
@@ -476,6 +476,14 @@ mod tests {
         y
     }
 
+    fn constant0<const N: usize>(_x: [bool; N]) -> [bool; N] {
+        [false; N]
+    }
+
+    fn constant1<const N: usize>(_x: [bool; N]) -> [bool; N] {
+        [true; N]
+    }
+
     fn reverse<const N: usize>(x: [bool; N]) -> [bool; N] {
         let mut y = [false; N];
         for i in 0..N {
@@ -490,8 +498,8 @@ mod tests {
         let input_qubit: usize = 0;
         let answer_qubit: usize = 1;
         let mut simulation = QuantumSimulation::new(qubit_count, 0u64);
-        let fs = [id, not];
-        
+        let fs = [id, not, reverse, constant0, constant1];
+
         for i in 0..fs.len() {
             println!("Testing function number {}...", i);
             let f = fs[i];
