@@ -398,8 +398,6 @@ impl Simulation for QuantumSimulation {
                 continue;
             }
 
-            dbg!(x, y0, y1);
-
             // Calculate the index of the output state to be swapped with the input state.
             let mut i1 = i0;
             for j in 0..N_OUT {
@@ -414,14 +412,10 @@ impl Simulation for QuantumSimulation {
             new_amplitudes.push((i1, self.amplitudes[i0]));
         }
 
-        println!("Updating amplitudes...");
-        println!("============================================");
-        dbg!(&self.amplitudes);
         // Update the amplitudes in accordance with state swapping.
         for (i, a) in new_amplitudes {
             self.amplitudes[i] = a;
         }
-        dbg!(&self.amplitudes);
     }
 }
 
